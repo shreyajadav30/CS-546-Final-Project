@@ -26,7 +26,7 @@ document
         errorDom.textContent = resData.error.message;
       }
       if (resData.user) {
-        location.assign("/");
+        location.replace("/");
       }
     } catch (e) {
       console.log(e);
