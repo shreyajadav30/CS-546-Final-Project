@@ -88,54 +88,54 @@ export const verifyAccessTokenForLoginRegister = async (req, res, next) => {
     next();
   }
 };
-// export const createRefreshToken = async (userId) => {
-//   return new Promise((resolve, reject) => {
-//     const payload = {};
-//     const secret = process.env.REFRESH_TOKEN_SECRET;
-//     const options = {
-//       expiresIn: "1y",
-//       issuer: "dhruvmojila.com",
-//       audience: userId.toString(),
-//     };
+export const createRefreshToken = async (userId) => {
+  return new Promise((resolve, reject) => {
+    const payload = {};
+    const secret = process.env.REFRESH_TOKEN_SECRET;
+    const options = {
+      expiresIn: "1y",
+      issuer: "dhruvmojila.com",
+      audience: userId.toString(),
+    };
 
-//     jwt.sign(payload, secret, options, (err, token) => {
-//       if (err) {
-//         console.log(err.message);
-//         reject(createHttpError.InternalServerError());
-//         return;
-//       }
+    jwt.sign(payload, secret, options, (err, token) => {
+      if (err) {
+        console.log(err.message);
+        reject(createHttpError.InternalServerError());
+        return;
+      }
 
-//       resolve(token);
-//     });
-//   });
-// };
+      resolve(token);
+    });
+  });
+};
 
-// export const verifyRefreshTokenMiddleware = async (
-//   refreshToken,
-//   sessionSavedRefreceToken
-// ) => {
-//   return new Promise((resolve, reject) => {
-//     jwt.verify(
-//       refreshToken,
-//       process.env.REFRESH_TOKEN_SECRET,
-//       (err, payload) => {
-//         if (err) {
-//           console.log(err.message);
-//           return reject(createHttpError.Unauthorized("Wrong refresh token"));
-//         }
-//         const userId = payload.aud;
+export const verifyRefreshTokenMiddleware = async (
+  refreshToken,
+  sessionSavedRefreceToken
+) => {
+  return new Promise((resolve, reject) => {
+    jwt.verify(
+      refreshToken,
+      process.env.REFRESH_TOKEN_SECRET,
+      (err, payload) => {
+        if (err) {
+          console.log(err.message);
+          return reject(createHttpError.Unauthorized("Wrong refresh token"));
+        }
+        const userId = payload.aud;
 
-//         // console.log(sessionSavedRefreceToken);
+        // console.log(sessionSavedRefreceToken);
 
-//         if (refreshToken === sessionSavedRefreceToken) {
-//           resolve(userId);
-//         } else {
-//           return reject(createHttpError.Unauthorized("Token not valid!"));
-//         }
-//       }
-//     );
-//   });
-// };
+        if (refreshToken === sessionSavedRefreceToken) {
+          resolve(userId);
+        } else {
+          return reject(createHttpError.Unauthorized("Token not valid!"));
+        }
+      }
+    );
+  });
+};
 
 export const validateUser = async (req, res, next) => {
   const userAccessToken = req.cookies.accessToken;
