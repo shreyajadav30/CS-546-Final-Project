@@ -1,7 +1,13 @@
 import createHttpError from "http-errors";
 import authRoutes from "./auth.js";
+import homeRoutes from "./home.js";
+import { static as staticDir } from "express";
+import { validateUser } from "../utils/helpers/jwtHelper.js";
 
 const constructorMethod = (app) => {
+  app.get("*", validateUser);
+  app.use("/public", staticDir("public"));
+  app.use("/", homeRoutes);
   app.use("/auth", authRoutes);
 
   app.use("*", (req, res, next) => {
