@@ -1,0 +1,58 @@
+{{!-- 
+<main>
+  <h1>Users</h1>
+
+  <form action="/addUser" method="get">
+    <button type="submit">Add User</button>
+  </form>
+
+  <form action="//getuser/{{user._id}}" method="get">
+    <button type="submit">Update Record</button>
+  </form>
+
+  <form action="/delete" method="get">
+    <button type="submit">Delete Record</button>
+  </form>
+
+</main> --}}
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>First Name</th>
+      <th>Last Name</th>
+      <th>Email</th>
+      <th>Password</th>
+      <th>Username</th>
+      <th>role</th>
+      <th>survey</th>
+      <th>
+        <div class="add">
+          <a href="/users/addUser" class="button">+ Add</a>
+        </div>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each users}}
+      <tr>
+        <td>{{this.firstName}}</td>
+        <td>{{this.lastName}}</td>
+        <td>{{this.email}}</td>
+        <td>{{this.password}}</td>
+        <td>{{this.username}}</td>
+        <td>{{this.role}}</td>
+        <td>{{this.survey}}</td>
+        <td>
+          <form action="/users/delete/{{this._id}}" method="post">
+            <a href="/users/addUser/{{this._id}}" class="button">Edit</a>
+            <button type="submit" class="button">
+              Delete
+            </button>
+          </form>
+        </td>
+      </tr>
+
+    {{/each}}
+  </tbody>
+</table>
