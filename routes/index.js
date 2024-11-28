@@ -2,13 +2,19 @@ import createHttpError from "http-errors";
 import authRoutes from "./auth.js";
 import homeRoutes from "./home.js";
 import { static as staticDir } from "express";
-import { validateUser } from "../utils/helpers/jwtHelper.js";
+import {
+  validateUser,
+  verifyAccessTokenMiddleware,
+} from "../utils/helpers/jwtHelper.js";
+import usersRoutes from "./users.js";
 
 const constructorMethod = (app) => {
   app.get("*", validateUser);
+
   app.use("/public", staticDir("public"));
   app.use("/", homeRoutes);
   app.use("/auth", authRoutes);
+  app.use("/users", verifyAccessTokenMiddleware, usersRoutes);
 
   app.use("*", (req, res, next) => {
     // return res.status(404).json({ error: "Not found" });

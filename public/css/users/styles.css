@@ -1,0 +1,111 @@
+/*This file should have 10 CSS rulesets */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: #d2e4ea;
+  font-family: "Times New Roman", serif;
+}
+
+main {
+  max-width: 75%;
+  margin: auto;
+}
+
+h1 {
+  color: #000080;
+  margin-bottom: 5px;
+  text-align: center;
+}
+
+h2 {
+  color: #11455b;
+  margin-bottom: 5px;
+}
+
+p {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.label {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.inputText {
+  padding: 10px;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.table {
+  width: 90%;
+  margin-top: 40px;
+  margin-left: 60px;
+  margin-right: 20px;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: 8px;
+  text-align: center;
+  border: 1px solid rgb(0, 0, 0);
+}
+
+a {
+  color: rgb(4, 126, 85);
+  font-size: 20px;
+}
+a:hover {
+  color: rgb(27, 60, 169);
+}
+
+.form-control {
+  margin-left: 50px;
+  align-items: left;
+}
+.add {
+  display: inline-block;
+}
+
+.button {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  color: rgb(0, 0, 0);
+  background-color: #bcbec0;
+  border: none;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.button:hover {
+  background-color: #c9cbcd;
+}
+
+.form {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.form label {
+  width: 80px;
+  /* flex-shrink: 0; */
+  text-align: left;
+  margin-right: 5px;
+}
+
+.add-form {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 60;
+}
