@@ -27,9 +27,6 @@ export const addSurvey = async (
     if (!insertedSurvey || !insertedSurvey.insertedId) {
       throw "Survey data is not inserted.";
     }
-    if(insertedSurvey.acknowledged && insertedSurvey.acknowledged == true){
-      throw "Survey Inserted Successfully!"
-    }
     const newId = insertedSurvey.insertedId.toString();
     //const user = await getUserById(newId);
     //console.log(newId);
