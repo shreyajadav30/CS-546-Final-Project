@@ -1,6 +1,7 @@
 import createHttpError from "http-errors";
 import authRoutes from "./auth.js";
 import homeRoutes from "./home.js";
+import surveyRoutes from "./survey.js";
 import { static as staticDir } from "express";
 import {
   validateUser,
@@ -14,6 +15,7 @@ const constructorMethod = (app) => {
   app.use("/public", staticDir("public"));
   app.use("/", homeRoutes);
   app.use("/auth", authRoutes);
+  app.use("/survey", surveyRoutes);
   app.use("/users", verifyAccessTokenMiddleware, usersRoutes);
 
   app.use("*", (req, res, next) => {
