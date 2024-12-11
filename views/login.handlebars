@@ -1,4 +1,4 @@
-<h1>Login</h1>
+{{! <h1>Login</h1>
 <form id="loginForm">
   <div class="error"></div>
   <div>
@@ -12,5 +12,57 @@
   </div>
   <button type="submit">Login</button>
 </form>
+
+<script src="../public/js/login.js"></script> }}
+
+{{!
+
+login form handlebar template
+
+}}
+
+<div id="signIncontainer">
+  <h1 id="title">Sign In</h1>
+  {{#if hasErrors}}
+    <div id="serverErrorDiv">
+      <ul class="error">
+        {{#each errors}}
+          <li>{{this}}</li>
+        {{/each}}
+      </ul>
+    </div>
+  {{/if}}
+  <div id="errorDiv" hidden>
+    <ul id="errorDivUl" class="error">
+
+    </ul>
+  </div>
+  <div class="formDiv">
+    <form
+      action="/auth/login"
+      method="post"
+      name="signin-form"
+      id="signin-form"
+    >
+      <label for="user_id">User ID
+        <input
+          type="text"
+          id="user_id"
+          name="user_id"
+          value="{{userData.user_id}}"
+        />
+      </label>
+
+      <label for="password">Password
+        <input type="password" id="password" name="password" required />
+      </label>
+
+      <button type="submit" id="submit_button" name="submit_button">Sign In</button>
+    </form>
+  </div>
+  <div id="link">
+    <a href="/auth/register">Click here to signup!</a>
+  </div>
+</div>
 
 <script src="../public/js/login.js"></script>
