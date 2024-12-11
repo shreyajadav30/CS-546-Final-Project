@@ -41,7 +41,7 @@ router.post('/create', async (req, res, next) => {
 			question.options = ['', ''];
 			break;
 		case 'rating':
-			question.stars = 5;
+			question.scale = 5;
 			break;
 		default:
 			break;
@@ -58,7 +58,7 @@ router.post('/create', async (req, res, next) => {
 router.post('/:id/create-question', async (req, res, next) => {
 	// Todo: Error handling for question data
 	const { id } = req.params;
-	const { type, questionText, options, stars, category, newCategory } =
+	const { type, questionText, options, scale, category, newCategory } =
 		req.body;
 
 	let selectedCategory = category;
@@ -76,6 +76,7 @@ router.post('/:id/create-question', async (req, res, next) => {
 		questionText,
 		useCount: 0,
 	};
+	console.log('type: ', type);
 
 	switch (type) {
 		case 'single_select':
@@ -83,7 +84,7 @@ router.post('/:id/create-question', async (req, res, next) => {
 			questionData.options = options;
 			break;
 		case 'rating':
-			questionData.stars = stars;
+			questionData.scale = scale;
 			break;
 		default:
 			break;
