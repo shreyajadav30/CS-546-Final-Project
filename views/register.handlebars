@@ -1,4 +1,4 @@
-<h1>Register</h1>
+{{! <h1>Register</h1>
 <form id="registerForm">
   <div class="error"></div>
   <div>
@@ -12,5 +12,107 @@
   </div>
   <button type="submit">Register</button>
 </form>
+
+<script src="../public/js/register.js"></script> }}
+
+{{!
+
+registration handelbars
+
+}}
+
+<div id="signUpcontainer">
+  <h1 id="title">Register</h1>
+
+  {{#if hasErrors}}
+    <div id="serverErrorDiv">
+      <ul class="error">
+        {{#each errors}}
+          <li>{{this}}</li>
+        {{/each}}
+      </ul>
+    </div>
+  {{/if}}
+  <div id="errorDiv" hidden>
+    <ul id="errorDivUl" class="error">
+
+    </ul>
+  </div>
+  <div class="formDiv">
+    <form
+      action="/auth/register"
+      method="post"
+      name="signup-form"
+      id="signup-form"
+    >
+      <label for="firstName">First Name
+        <input
+          type="text"
+          id="firstName"
+          name="firstName"
+          value="{{userData.firstName}}"
+          required
+        />
+      </label>
+
+      <label for="lastName">Last Name
+        <input
+          type="text"
+          id="lastName"
+          name="lastName"
+          value="{{userData.lastName}}"
+          required
+        />
+      </label>
+
+      <label for="email">Email
+        <input
+          type="email"
+          id="email"
+          name="email"
+          value="{{userData.email}}"
+          required
+        />
+      </label>
+
+      <label for="userId">User ID
+        <input
+          type="text"
+          id="userId"
+          name="userId"
+          value="{{userData.userId}}"
+          required
+        />
+      </label>
+
+      <label for="password">Password
+        <input type="password" id="password" name="password" required />
+      </label>
+
+      <label for="confirmPassword">Confirm Password
+        <input
+          type="password"
+          id="confirmPassword"
+          name="confirmPassword"
+          oninput="comparePasswordAndConfirmPassword()"
+          required
+        />
+      </label>
+
+      <label for="role">Role
+        <select id="role" name="role" required>
+          <option value="" disabled selected>Select Role</option>
+          <option value="admin">Admin</option>
+          <option value="user">User</option>
+        </select>
+      </label>
+
+      <button type="submit" id="submitButton" name="submitButton">Sign Up</button>
+    </form>
+  </div>
+  <div id="link">
+    <a href="/auth/login">Already have an account? Click here to sign-in</a>
+  </div>
+</div>
 
 <script src="../public/js/register.js"></script>
