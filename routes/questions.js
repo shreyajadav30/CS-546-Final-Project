@@ -74,9 +74,9 @@ router.post('/:id/create-question', async (req, res, next) => {
 	const questionData = {
 		questionId: id,
 		questionText,
+		type,
 		useCount: 0,
 	};
-	console.log('type: ', type);
 
 	switch (type) {
 		case 'single_select':
