@@ -74,6 +74,7 @@ router.post('/:id/create-question', async (req, res, next) => {
 	const questionData = {
 		questionId: id,
 		questionText,
+		useCount: 0,
 	};
 
 	switch (type) {
