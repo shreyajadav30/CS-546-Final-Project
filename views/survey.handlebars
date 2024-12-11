@@ -42,33 +42,44 @@
             <div>
                 <label for="status">Status:</label>
                 <select id="status" name="status">
-                    <option value="Active">Active</option>
-                    <option value="Inactive">Inactive</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
                 </select>
             </div>
-            <table class="table">
-  <thead>
-    <tr>
-        <th>Action</th>
-        <th>First Name</th>
-        <th>Last Name</th>
-        <th>Email</th>
-    </tr>
-  </thead>
-  <tbody>
-    {{#each userList}}
-      <tr>
-        <td>
-            <input type="checkbox" name="userMapping" id="{{this._id}}" value="{{this._id}}" {{#if checked}}checked{{/if}}>
-        </td>
-        <td>{{this.firstName}}</td>
-        <td>{{this.lastName}}</td>
-        <td>{{this.email}}</td>
-      </tr>
+            <div>
+                
+            </div>
+            <div>
+                <h3>User Selection:</h3>
+                <div>
+                    <label for="selectAll">
+                    <input type="checkbox" id="selectAll"> Select All
+                    </label>
+                </div>
+                <table class="table">
+                <thead>
+                    <tr>
+                        <th>Action</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Email</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each userList}}
+                    <tr>
+                        <td>
+                            <input type="checkbox" class="userMapping" name="userMapping" id="{{this._id}}" value="{{this._id}}" {{#if checked}}checked{{/if}}>
+                        </td>
+                        <td>{{this.firstName}}</td>
+                        <td>{{this.lastName}}</td>
+                        <td>{{this.email}}</td>
+                    </tr>
 
-    {{/each}}
-  </tbody>
-</table>
+                    {{/each}}
+                </tbody>
+                </table>
+            </div>
             <input type="submit" id="submit" name="Submit">
         </form>
     </div>
