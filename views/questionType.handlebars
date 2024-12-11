@@ -1,0 +1,9 @@
+<form action='/questions/create' method='POST'>
+	<label for='type'>Select Question Type:</label>
+	<select name='type' id='type' required>
+		{{#each questionTypes}}
+			<option value='{{type}}'>{{name}}</option>
+		{{/each}}
+	</select>
+	<button type='submit'>Continue</button>
+</form>

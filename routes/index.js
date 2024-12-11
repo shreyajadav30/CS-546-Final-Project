@@ -8,6 +8,7 @@ import {
   verifyAccessTokenMiddleware,
 } from "../utils/helpers/jwtHelper.js";
 import usersRoutes from "./users.js";
+import questionsRoutes from "./questions.js";
 
 const constructorMethod = (app) => {
   app.get("*", validateUser);
@@ -17,6 +18,7 @@ const constructorMethod = (app) => {
   app.use("/auth", authRoutes);
   app.use("/survey", surveyRoutes);
   app.use("/users", verifyAccessTokenMiddleware, usersRoutes);
+  app.use("/questions", verifyAccessTokenMiddleware, questionsRoutes);
 
   app.use("*", (req, res, next) => {
     // return res.status(404).json({ error: "Not found" });
