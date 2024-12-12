@@ -12,10 +12,10 @@ import {
 const constructorMethod = (app) => {
   app.use("/public", staticDir("public"));
 
-  app.use("/", homeRoutes);
+  app.use("/", isUserLoggedIn, homeRoutes);
   app.use("/auth", isUserLoggedInForLoginAndSignUp, authRoutes);
-  app.use("/survey", surveyRoutes);
-  app.use("/users", isAdmin, usersRoutes);
+  app.use("/survey", isUserLoggedIn, surveyRoutes);
+  app.use("/users", isUserLoggedIn, usersRoutes);
 
   app.use("*", (req, res, next) => {
     return res.status(404).render("error", {

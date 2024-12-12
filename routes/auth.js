@@ -211,7 +211,7 @@ router
           email: newUser.email,
         };
         if (newUser.role === "admin") {
-          res.redirect("/administrator");
+          res.redirect("/admin");
         } else if (newUser.role === "user") {
           res.redirect("/user");
         }

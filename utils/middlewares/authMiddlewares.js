@@ -15,7 +15,7 @@ export const roleBasedRouting = async (req, res, next) => {
     if (req.session.user) {
       let role = req.session.user.role;
       if (role === "admin") {
-        return res.redirect("/administrator");
+        return res.redirect("/admin");
       } else if (role === "user") {
         return res.redirect("/user");
       }
@@ -33,7 +33,7 @@ export const isUserLoggedInForLoginAndSignUp = async (req, res, next) => {
   if (req.session.user) {
     let role = req.session.user.role;
     if (role === "admin") {
-      return res.redirect("/administrator");
+      return res.redirect("/admin");
     } else if (role === "user") {
       return res.redirect("/user");
     }
@@ -84,4 +84,17 @@ export const isUser = async (req, res, next) => {
   } else {
     return res.redirect("/auth/login");
   }
+};
+
+export const isUserLoggedIn = async (req, res, next) => {
+  //   if (req.path === "/") {
+  //     console.log("signinuser");
+  if (req.session.user) {
+    next();
+  } else {
+    return res.redirect("/auth/login");
+  }
+  //   } else {
+  //     next();
+  //   }
 };
