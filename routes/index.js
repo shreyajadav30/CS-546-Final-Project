@@ -4,6 +4,7 @@ import surveyRoutes from "./survey.js";
 import { static as staticDir } from "express";
 
 import usersRoutes from "./users.js";
+import questionsRoutes from "./questions.js";
 import {
   isAdmin,
   isUserLoggedInForLoginAndSignUp,
@@ -16,6 +17,7 @@ const constructorMethod = (app) => {
   app.use("/auth", isUserLoggedInForLoginAndSignUp, authRoutes);
   app.use("/survey", isUserLoggedIn, surveyRoutes);
   app.use("/users", isUserLoggedIn, usersRoutes);
+  app.use("/questions", isUserLoggedIn, questionsRoutes);
 
   app.use("*", (req, res, next) => {
     return res.status(404).render("error", {
