@@ -7,13 +7,13 @@ import usersRoutes from "./users.js";
 import questionsRoutes from "./questions.js";
 import {
   isAdmin,
+  isUserLoggedIn,
   isUserLoggedInForLoginAndSignUp,
 } from "../utils/middlewares/authMiddlewares.js";
 
 const constructorMethod = (app) => {
   app.use("/public", staticDir("public"));
 
-  app.use("/", isUserLoggedIn, homeRoutes);
   app.use("/auth", isUserLoggedInForLoginAndSignUp, authRoutes);
   app.use("/survey", isUserLoggedIn, surveyRoutes);
   app.use("/users", isUserLoggedIn, usersRoutes);
