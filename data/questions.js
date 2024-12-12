@@ -1,4 +1,5 @@
 import { questions } from '../config/mongoCollections.js';
+import { validationMethods } from '../utils/helpers/validations.js';
 
 const getAllCategories = async () => {
 	const questionsCollection = await questions();
@@ -8,7 +9,48 @@ const getAllCategories = async () => {
 	return categories.map((category) => category.categoryName);
 };
 
+const getAllQuestions = async () => {
+	const questionsCollection = await questions();
+	const categories = await questionsCollection.find({}).toArray();
+	const allQuestions = categories.reduce((acc, category) => {
+		const categoryQuestions = category.questions.map((question) => ({
+			...question,
+			categoryName: category.categoryName,
+		}));
+		return acc.concat(categoryQuestions);
+	}, []);
+	return allQuestions;
+};
+
+const getAllQuestionsByCategoryName = async (categoryName) => {
+	categoryName = validationMethods.isValidString(categoryName);
+	const questionsCollection = await questions();
+	const category = await questionsCollection.findOne({ categoryName });
+	if (!category) {
+		throw new Error(`Category with name "${categoryName}" not found`);
+	}
+	return category?.questions || [];
+};
+
+const getQuestionById = async (id) => {
+	id = validationMethods.isValidObjectId(id);
+	const questionsCollection = await questions();
+	const category = await questionsCollection.findOne(
+		{ 'questions.questionId': id },
+		{ projection: { 'questions.$': 1, categoryName: 1 } }
+	);
+	if (!category?.questions || category.questions.length === 0) {
+		throw new Error(`Question with ID "${id}" not found`);
+	}
+	return {
+		...category.questions[0],
+		categoryName: category.categoryName,
+	};
+};
+
 const addQuestionToCategory = async (categoryName, questionData) => {
+	// Todo: Add validation
+	categoryName = validationMethods.isValidString(categoryName);
 	const questionsCollection = await questions();
 	let category = await questionsCollection.findOne({ categoryName });
 	if (!category) {
@@ -24,4 +66,10 @@ const addQuestionToCategory = async (categoryName, questionData) => {
 	}
 };
 
-export { getAllCategories, addQuestionToCategory };
+export {
+	getAllCategories,
+	getAllQuestions,
+	getAllQuestionsByCategoryName,
+	getQuestionById,
+	addQuestionToCategory,
+};
