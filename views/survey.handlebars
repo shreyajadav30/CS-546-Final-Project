@@ -47,40 +47,23 @@
                 </select>
             </div>
             <div>
-                
+                <label for="surveyedFor">Survey For:</label>
+                <select id="surveyedFor" name="surveyedFor">
+                    {{#each userList}}
+                        <option value="{{this._id}}" data-email="{{this.email}}">{{this.firstName}} {{this.lastName}}</option>
+                    {{/each}}
+                </select>
             </div>
             <div>
-                <h3>User Selection:</h3>
-                <div>
-                    <label for="selectAll">
-                    <input type="checkbox" id="selectAll"> Select All
-                    </label>
-                </div>
-                <table class="table">
-                <thead>
-                    <tr>
-                        <th>Action</th>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Email</th>
-                    </tr>
-                </thead>
-                <tbody>
+                <label for="surveyedBy">Survey By:</label>
+                <select id="surveyedBy" name="surveyedBy[]" multiple>
                     {{#each userList}}
-                    <tr>
-                        <td>
-                            <input type="checkbox" class="userMapping" name="userMapping" id="{{this._id}}" value="{{this._id}}" {{#if checked}}checked{{/if}}>
-                        </td>
-                        <td>{{this.firstName}}</td>
-                        <td>{{this.lastName}}</td>
-                        <td>{{this.email}}</td>
-                    </tr>
-
+                        <option value="{{this._id}}" data-email="{{this.email}}">{{this.firstName}} {{this.lastName}}</option>
                     {{/each}}
-                </tbody>
-                </table>
+                </select>
             </div>
             <input type="submit" id="submit" name="Submit">
         </form>
     </div>
 </main>
+<script src="/public/js/survey.js" ></script>
