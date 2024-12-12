@@ -1,0 +1,33 @@
+<header class="sticky-header">
+  <nav class="navbar">
+    <div class="nav-brand">
+      <a href="/">SurveySync</a>
+    </div>
+
+    {{#if (or (isEqual title "Register") (isEqual title "Login"))}}
+      <div>Please Login to Access!</div>
+    {{else if (isEqual title "Sign Out")}}
+      <div>Please Login to Access!</div>
+    {{else}}
+      {{#if (isEqual session.user.role "admin")}}
+        <ul class="nav-links">
+          <li><a href="/">Dashboard</a></li>
+          <li><a href="/survey">Survey</a></li>
+          <li><a href="/questions">Questions</a></li>
+          <li><a href="/users">Users</a></li>
+        </ul>
+        <div class="nav-auth">
+          <a href="/auth/signoutuser" class="logout-btn">Logout</a>
+        </div>
+      {{else}}
+        <ul class="nav-links">
+          <li><a href="/">Dashboard</a></li>
+          <li><a href="/users">Profile</a></li>
+        </ul>
+        <div class="nav-auth">
+          <a href="/auth/signoutuser" class="logout-btn">Logout</a>
+        </div>
+      {{/if}}
+    {{/if}}
+  </nav>
+</header>
