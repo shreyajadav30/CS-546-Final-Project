@@ -1,0 +1,54 @@
+<form {{!-- action="/surveys/submit" method="POST" --}}>
+	 {{#each questions}}
+	 <h1>{{this.category}}</h1>
+	{{#each this.questions}}
+		<div class="question-block">
+			<label for="question_{{this.questionId}}">{{this.questionText}}</label>
+
+			{{#if (or (isEqual this.type "single_select") (isEqual this.type "multi_select"))}}
+				<ul>
+					{{#each this.options}}
+						<li>
+							{{#if (isEqual ../type "single_select")}}
+								<input
+									type="radio"
+									id="option_{{@index}}_{{../questionId}}"
+									name="question_{{../questionId}}"
+									value="{{this}}"
+									required
+								/>
+							{{else}}
+								<input
+									type="checkbox"
+									id="option_{{@index}}_{{../questionId}}"
+									name="question_{{../questionId}}[]"
+									value="{{this}}"
+								/>
+							{{/if}}
+							<label for="option_{{@index}}_{{../questionId}}">{{this}}</label>
+						</li>
+					{{/each}}
+				</ul>
+			{{/if}}
+
+			{{#if (isEqual this.type "rating")}}
+				<select id="question_{{this.questionId}}" name="question_{{this.questionId}}" required>
+					{{#each (range 1 this.scale)}}
+						<option value="{{this}}">{{this}}</option>
+					{{/each}}
+				</select>
+			{{/if}}
+
+			{{#if (isEqual this.type "text")}}
+				<textarea
+					id="question_{{this.questionId}}"
+					name="question_{{this.questionId}}"
+					required
+				></textarea>
+			{{/if}}
+		</div>
+	{{/each}}
+	{{/each}}
+
+	{{!-- <button type="submit">Submit Survey</button> --}}
+</form>
