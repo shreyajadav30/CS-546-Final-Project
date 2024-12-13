@@ -91,4 +91,14 @@ router.route("/delete/:id").post(async (req, res) => {
   }
 });
 
+router.route("/getAllUsers").get(async (req, res) => {
+  try {
+    const users = await usersDataFunctions.getAllUsers();
+    // console.log(users);
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).send("An error occurred while loading the page.");
+  }
+});
+
 export default router;

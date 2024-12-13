@@ -38,43 +38,52 @@ router.post("/", async (req, res, next) => {
       endDate,
       questionnaire,
       status,
-      surveyedFor,
-      surveyedBy,
+      userMappingData,
     } = surData;
 
     surveyName = helper.checkString(surveyName, "Survey Name");
     startDate = helper.sDateValidate(startDate);
     endDate = helper.eDateValidate(startDate, endDate);
     status = helper.statusValid(status);
+    userMappingData = JSON.parse(userMappingData);
     //surveyedFor = helper.checkId(surveyedFor,"Survey For");
     //surveyedBy = helper.checkId(surveyedBy,"Survey By");
-    let userEmail = [];
 
-    surveyedBy.forEach(async (val) => {
-      const userList = await userData.getUserById(val);
-      userEmail.push(userList.email);
-    });
-
-    const mailOptions = {
-      from: "SurveySync100@gmail.com",
-      to: userEmail,
-      subject: "Thank you for completing the survey!",
-      text: `
+    Object.keys(userMappingData).map(async (user) => {
+      let currentuser = await userData.getUserById(user);
+      let userEmail = [];
+      userMappingData[user].forEach(async (val) => {
+        const userList = await userData.getUserById(val);
+        userEmail.push(userList.email);
+      });
+      const mailOptions = {
+        from: "SurveySync100@gmail.com",
+        to: userEmail,
+        subject: "Thank you for completing the survey!",
+        text: `
             Hi,
 
             Thank you for participating in our survey. 
             Your feedback is valuable to us!
 
             Survey Title: ${surveyName}
+            You are surveying for : ${currentuser.firstName} ${
+          currentuser.lastName
+        }
             Date: ${new Date().toLocaleDateString()}
             
             Best regards,
             The Survey Team
         `,
-    };
+      };
 
-    await transporter.sendMail(mailOptions);
-    console.log(`Email sent to ${userEmail}`);
+      await transporter.sendMail(mailOptions);
+      console.log(`Email sent to ${userEmail}`);
+    });
+    // surveyedBy.forEach(async (val) => {
+    //   const userList = await userData.getUserById(val);
+    //   userEmail.push(userList.email);
+    // });
 
     const surveyDetails = await surveyData.addSurvey(
       surveyName,
@@ -82,8 +91,7 @@ router.post("/", async (req, res, next) => {
       endDate,
       questionnaire,
       status,
-      surveyedFor,
-      surveyedBy
+      userMappingData
     );
 
     if (surveyDetails.acknowledged) {

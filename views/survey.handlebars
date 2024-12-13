@@ -16,54 +16,92 @@
 
 </main> --}}
 <main>
-    <div id="survey-container">
-        <form id="survey-form" method="POST" action="/survey">
-            <h2>{{title}}</h2>
-            <div>
-                <label for="surveyName">Survey Name:</label>
-                <input type="text" id="surveyName" name="surveyName" placeholder="Enter survey name" required>
-            </div>
-            
-            <div>
-                <label for="startDate">Start Date:</label>
-                <input type="date" id="startDate" name="startDate" required>
-            </div>
-            
-            <div>
-                <label for="endDate">End Date:</label>
-                <input type="date" id="endDate" name="endDate" required>
-            </div>
+  <div id="survey-container">
+    <form id="survey-form" method="POST" action="/survey">
+      <h2>{{title}}</h2>
+      <div>
+        <label for="surveyName">Survey Name:</label>
+        <input
+          type="text"
+          id="surveyName"
+          name="surveyName"
+          placeholder="Enter survey name"
+          required
+        />
+      </div>
 
-            <div>
-                <label for="questionnaire">Questions:</label>
-                <input type="text" id="questionnaire" name="questionnaire" required>
-            </div>
+      <div>
+        <label for="startDate">Start Date:</label>
+        <input type="date" id="startDate" name="startDate" required />
+      </div>
 
-            <div>
-                <label for="status">Status:</label>
-                <select id="status" name="status">
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                </select>
-            </div>
-            <div>
-                <label for="surveyedFor">Survey For:</label>
-                <select id="surveyedFor" name="surveyedFor">
-                    {{#each userList}}
-                        <option value="{{this._id}}" data-email="{{this.email}}">{{this.firstName}} {{this.lastName}}</option>
-                    {{/each}}
-                </select>
-            </div>
-            <div>
-                <label for="surveyedBy">Survey By:</label>
-                <select id="surveyedBy" name="surveyedBy[]" multiple>
-                    {{#each userList}}
-                        <option value="{{this._id}}" data-email="{{this.email}}">{{this.firstName}} {{this.lastName}}</option>
-                    {{/each}}
-                </select>
-            </div>
-            <input type="submit" id="submit" name="Submit">
-        </form>
+      <div>
+        <label for="endDate">End Date:</label>
+        <input type="date" id="endDate" name="endDate" required />
+      </div>
+
+      <div>
+        <label for="questionnaire">Questions:</label>
+        <input type="text" id="questionnaire" name="questionnaire" required />
+      </div>
+
+      <div>
+        <label for="status">Status:</label>
+        <select id="status" name="status">
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
+      </div>
+      {{!-- <div>
+        <label for="surveyedFor">Survey For:</label>
+        <select id="surveyedFor" name="surveyedFor">
+          {{#each userList}}
+            <option
+              value="{{this._id}}"
+              data-email="{{this.email}}"
+            >{{this.firstName}} {{this.lastName}}</option>
+          {{/each}}
+        </select>
+      </div>
+      <div>
+        <label for="surveyedBy">Survey By:</label>
+        <select id="surveyedBy" name="surveyedBy[]" multiple>
+          {{#each userList}}
+            <option
+              value="{{this._id}}"
+              data-email="{{this.email}}"
+            >{{this.firstName}} {{this.lastName}}</option>
+          {{/each}}
+        </select>
+      </div> --}}
+
+      <div id="dropdown-container">
+        <label for="addSurveyFor">User Mapping:</label>
+        <button type="button" id="addSurveyFor" class="add-btn">+ Add Survey For</button>
+
+        <div id="selectedSurveyForUser" class="accordion-container">
+
+        </div>
+
+        <input type="hidden" name="userMappingData" id="userMappingData" />
+
+      </div>
+      <input type="submit" id="submitBtn" name="submitBtn" />
+    </form>
+    <div id="userDropDown" class="search-dropdown" style="display: none;">
+      <div class="search-box">
+        <input
+          type="text"
+          id="search-input"
+          class="search-input"
+          placeholder="Search..."
+        />
+      </div>
+      <ul class="dropdown-list" id="dropdown-list">
+
+      </ul>
     </div>
+
+  </div>
 </main>
-<script src="/public/js/survey.js" ></script>
+<script src="/public/js/survey.js"></script>
