@@ -1,0 +1,44 @@
+<table class='table'>
+	<thead>
+		<tr>
+			<th>Question ID</th>
+			<th>Category</th>
+			<th>Type</th>
+			<th>Question use count</th>
+			<th>
+				<div class='add'>
+					<a
+						href='/questions/create-question'
+						class='button'
+					>Create</a>
+				</div>
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+		{{#each questions}}
+			<tr>
+				<td>{{this.questionId}}</td>
+				<td>{{this.categoryName}}</td>
+				<td>{{this.type}}</td>
+				<td>{{this.useCount}}</td>
+				<td>
+					Todo: Edit & Delete
+					{{!-- <form
+						action='/questions/delete/{{this.questionId}}'
+						method='post'
+					>
+						<a
+							href='/questions/addUser/{{this.questionId}}'
+							class='button'
+						>Edit</a>
+						<button type='submit' class='button'>
+							Delete
+						</button>
+					</form> --}}
+				</td>
+			</tr>
+
+		{{/each}}
+	</tbody>
+</table>
