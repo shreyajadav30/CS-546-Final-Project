@@ -204,6 +204,7 @@ router
 
       if (newUser) {
         req.session.user = {
+          _id: newUser._id,
           firstName: newUser.firstName,
           lastName: newUser.lastName,
           userId: newUser.userId,

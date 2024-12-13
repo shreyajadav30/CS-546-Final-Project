@@ -1,21 +1,15 @@
-{{!-- 
-<main>
-  <h1>Users</h1>
-
-  <form action="/addUser" method="get">
-    <button type="submit">Add User</button>
-  </form>
-
-  <form action="//getuser/{{user._id}}" method="get">
-    <button type="submit">Update Record</button>
-  </form>
-
-  <form action="/delete" method="get">
-    <button type="submit">Delete Record</button>
-  </form>
-
-</main> --}}
-
+{{#if (isEqual session.user.role "admin")}}
+<form action="/users" method="POST">
+  <label class="label" for="searchTerm">Search :</label>
+  <input
+    class="inputText"
+    type="text"
+    id="search"
+    name="searchTerm"
+    value="{{searchTerm}}"
+  />
+  <input class="submit" type="submit" value="Search" />
+</form>
 <table class="table">
   <thead>
     <tr>
@@ -25,30 +19,118 @@
       <th>User Id</th>
       <th>role</th>
       <th>
-        <div class="add">
+        {{!-- <div class="add">
           <a href="/users/addUser" class="button">+ Add</a>
-        </div>
+        </div> --}}
       </th>
     </tr>
   </thead>
-  <tbody>
-    {{#each users}}
-      <tr>
-        <td>{{this.firstName}}</td>
-        <td>{{this.lastName}}</td>
-        <td>{{this.email}}</td>
-        <td>{{this.userId}}</td>
-        <td>{{this.role}}</td>
-        <td>
-          <form action="/users/delete/{{this._id}}" method="post">
-            <a href="/users/addUser/{{this._id}}" class="button">Edit</a>
-            <button type="submit" class="button">
-              Delete
-            </button>
-          </form>
-        </td>
-      </tr>
+  {{#if "searchTerm"}}
+    <tbody>
+      {{#each users}}
+        <tr>
+          <td>{{this.firstName}}</td>
+          <td>{{this.lastName}}</td>
+          <td>{{this.email}}</td>
+          <td>{{this.userId}}</td>
+          <td>{{this.role}}</td>
+          <td>
+            <form action="/users/delete/{{this._id}}" method="post">
+              <a href="/users/addUser/{{this._id}}" class="button">Edit</a>
+              <button type="submit" class="button">
+                Delete
+              </button>
+            </form>
+          </td>
+        </tr>
 
-    {{/each}}
-  </tbody>
+      {{/each}}
+    </tbody>
+
+  {{else}}
+    <tbody>
+      {{#each users}}
+        <tr>
+          <td>{{this.firstName}}</td>
+          <td>{{this.lastName}}</td>
+          <td>{{this.email}}</td>
+          <td>{{this.userId}}</td>
+          <td>{{this.role}}</td>
+          <td>
+            <form action="/users/delete/{{this._id}}" method="post">
+              <a href="/users/addUser/{{this._id}}" class="button">Edit</a>
+              <button type="submit" class="button">
+                Delete
+              </button>
+            </form>
+          </td>
+        </tr>
+
+      {{/each}}
+    </tbody>
+  {{/if}}
 </table>
+    <a href="/users">Back to All users</a>
+  {{else}}
+<div class="add-form">
+  <form action="/users/" method="get">
+    <input type="hidden" name="_id" value="{{user._id}}" />
+    <div class="form">
+      <label>First Name</label>
+      <input
+        id="firstName"
+        class="form-control"
+        name="firstName"
+        placeholder="firstName"
+        required
+        value="{{user.firstName}}"
+      />
+    </div>
+    <div class="form">
+      <label>Last Name</label>
+      <input
+        class="form-control"
+        id="lastName"
+        name="lastName"
+        placeholder="lastName"
+        required
+        value="{{user.lastName}}"
+      />
+    </div>
+    <div class="form">
+      <label>Email</label>
+      <input
+        id="email"
+        name="email"
+        class="form-control"
+        placeholder="email"
+        required
+        value="{{user.email}}"
+      />
+    </div>
+    <div class="form">
+      <label>User Id</label>
+      <input
+        class="form-control"
+        id="username"
+        name="username"
+        placeholder="username"
+        required
+        value="{{user.userId}}"
+      />
+    </div>
+    <div class="form">
+      <label>Role</label>
+      <input
+        class="form-control"
+        id="role"
+        name="role"
+        placeholder="role"
+        required
+        value="{{user.role}}"
+      />
+    </div>
+  <a href="/users/addUser/{{user._id}}" class="button">Edit</a>
+  </form>
+</div>
+{{/if}}

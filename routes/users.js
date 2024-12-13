@@ -7,15 +7,35 @@ router.route("/").get(async (req, res) => {
   try {
     const users = await usersDataFunctions.getAllUsers();
     // console.log(users);
-    res.render("userList", { users });
+    const user = await usersDataFunctions.getUserById(req.session.user._id);
+    res.render('userList', { users, user, searchTerm: '' })
+    // res.render("userList", { users });
   } catch (error) {
     res.status(500).send("An error occurred while loading the page.");
   }
-});
+}).post(async (req, res) => {
+  let {searchTerm} = req.body;
+  if (!searchTerm || Object.keys(searchTerm).length === 0) {
+    return res
+      .status(400)
+      .json({ error: "There are no fields in the request body" });
+  }
+  try {
+      const users = await usersDataFunctions.searchUser(
+        searchTerm
+      );
+      res.render("userList", { users, searchTerm });
+      
+  } catch (e) {
+    return res.status(404).render("error");
+  }
+});;
 
 router.route("/addUser").get(async (req, res) => {
   try {
-    res.render("addUser");
+    // console.log("......",req.session.user);
+    const user = await usersDataFunctions.getUserById(req.session.user._id);
+    res.render("addUser", {user});
   } catch (error) {
     res.status(500).send("An error occurred while loading the page.");
   }
@@ -24,7 +44,7 @@ router.route("/addUser").get(async (req, res) => {
 router.route("/addUser/:id").get(async (req, res) => {
   try {
     const user = await usersDataFunctions.getUserById(req.params.id);
-    console.log("gggggg......", user);
+    // console.log("gggggg......", user);
     res.render("addUser", { user });
   } catch (e) {
     return res.status(404).render("error", {
@@ -36,49 +56,26 @@ router.route("/addUser/:id").get(async (req, res) => {
 
 router.route("/addUser").post(async (req, res) => {
   let createUserData = req.body;
-  console.log("jjjjjjjjjjj");
+  // console.log("jjjjjjjjjjj");
   if (!createUserData || Object.keys(createUserData).length === 0) {
     return res
       .status(400)
       .json({ error: "There are no fields in the request body" });
   }
   try {
-    const { firstName, lastName, email, password, username, role, survey } =
+    const { _id,firstName, lastName, email, userId, role } =
       createUserData;
+      // console.log("iddd",_id);
 
-    const { _id } = req.body;
-    if (_id === "") {
-      const newUser = await usersDataFunctions.AddUser(
-        firstName,
-        lastName,
-        email,
-        password,
-        username,
-        role,
-        survey
-      );
-      // await newUser.save();
-      res.redirect("/users/");
-      console.log(">>>>>>>>>>>>>>>>>>");
-      // res.send("Item saved to database");
-      // res.render("addUser", { message: "User added successfully" });
-    } else {
-      console.log("oooooooooo");
       await usersDataFunctions.updateUser(
         _id,
         firstName,
         lastName,
         email,
-        password,
-        username,
-        role,
-        survey
+        userId,
+        role
       );
-      // await updateUser.save();
-      // res.send("Item saved to database");
-      // res.render("addUser", { message: "User updated successfully" });
       res.redirect("/users/");
-    }
   } catch (e) {
     return res.status(404).render("error");
   }
@@ -87,7 +84,6 @@ router.route("/addUser").post(async (req, res) => {
 router.route("/delete/:id").post(async (req, res) => {
   try {
     await usersDataFunctions.removeUser(req.params.id);
-    // res.render("addUser", { message: "User deleyed successfully" });
 
     res.redirect("/users/");
   } catch (e) {
