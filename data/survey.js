@@ -9,9 +9,17 @@ export const addSurvey = async (
   endDate,
   surveyQuestionList,
   status,
-  userMappingData
+  userMappingData,
+  selectedQuestions
 ) => {
-  if (!surveyName || !startDate || !endDate || !status || !userMappingData) {
+  if (
+    !surveyName ||
+    !startDate ||
+    !endDate ||
+    !status ||
+    !userMappingData ||
+    !selectedQuestions
+  ) {
     throw "Please enter Survey Name, startDate, endDate and status!";
   }
   surveyName = helper.checkString(surveyName, "Survey Name");
@@ -46,6 +54,7 @@ export const addSurvey = async (
     surveyQuestionList,
     status,
     userMapping,
+    selectedQuestions,
   };
 
   const insertedSurvey = await surveyCollection.insertOne(surveyData);

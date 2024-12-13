@@ -42,7 +42,10 @@
 
       <div>
         <label for="questionnaire">Questions:</label>
-        <input type="text" id="questionnaire" name="questionnaire" required />
+        {{! <input type="text" id="questionnaire" name="questionnaire" required /> }}
+        <input type="hidden" name="selectedQuestions" id="selectedQuestions" />
+        <div id="selectedQuestionDevTag"></div>
+        <button id="questionnaire" class="add-btn">+ Add Question</button>
       </div>
 
       <div>

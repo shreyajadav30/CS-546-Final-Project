@@ -10,13 +10,15 @@ const selectedSurveyForUser = document.getElementById("selectedSurveyForUser");
 const dropdown_container = document.getElementById("dropdown-container");
 
 const userMappingDataInput = document.getElementById("userMappingData");
+const selectedQuestionsInput = document.getElementById("selectedQuestions");
 
 let isSurveyForClicked = false;
 let isSurveyByClicked = false;
 
 const GET_ALL_USERS_URL = "http://localhost:3000/users/getAllUsers";
+const GET_ALL_QUESTION_URL = "http://localhost:3000/survey/getAllQuestion";
 
-start.addEventListener("change", function () {
+start.addEventListener("change", () => {
   const selectedStartDate = this.value;
   end.min = selectedStartDate;
   const today = new Date();
@@ -33,7 +35,7 @@ start.addEventListener("change", function () {
 // const selectAll = document.getElementById("selectAll");
 const userCheck = document.querySelectorAll(".userMapping");
 
-// selectAll.addEventListener("change", function () {
+// selectAll.addEventListener("change",  () => {
 //   const isChecked = this.checked;
 
 //   userCheck.forEach((checkbox) => {
@@ -92,7 +94,7 @@ const populateDropdownWithUserData = (dropdown, items, onSelect) => {
 
 let userMappingData = {};
 
-function addSubUserToList(_id, accordionItem, selectedUser) {
+const addSubUserToList = (_id, accordionItem, selectedUser) => {
   const surveyByList = accordionItem.querySelector(".surveyby-list");
   const surveyByEle = document.createElement("div");
   surveyByEle.className = "surveyByUser-item";
@@ -103,17 +105,15 @@ function addSubUserToList(_id, accordionItem, selectedUser) {
 
   userMappingData[_id].push(selectedUser._id);
 
-  surveyByEle
-    .querySelector(".remove-btn")
-    .addEventListener("click", function () {
-      surveyByList.removeChild(surveyByEle);
-      userMappingData[_id] = userMappingData[_id].filter(
-        (id) => id !== selectedUser._id
-      );
-    });
+  surveyByEle.querySelector(".remove-btn").addEventListener("click", () => {
+    surveyByList.removeChild(surveyByEle);
+    userMappingData[_id] = userMappingData[_id].filter(
+      (id) => id !== selectedUser._id
+    );
+  });
 
   surveyByList.appendChild(surveyByEle);
-}
+};
 
 const addUserToList = async (user) => {
   const accordionItem = document.createElement("div");
@@ -150,7 +150,7 @@ const addUserToList = async (user) => {
 
   accordionItem
     .querySelector(".accordion-header")
-    .addEventListener("click", function (e) {
+    .addEventListener("click", (e) => {
       if (e.target !== addSurveyByBtn) {
         const content = accordionItem.querySelector(".accordion-content");
         content.classList.toggle("active");
@@ -193,9 +193,195 @@ addSurveyForBtn.addEventListener("click", async (e) => {
   }
 });
 
+const getAllQuestionData = async () => {
+  try {
+    let data = await getData(GET_ALL_QUESTION_URL);
+    return data;
+  } catch (error) {
+    console.log("====================================");
+    console.log("Some error occured while fetching user data.");
+    console.log("====================================");
+  }
+};
+
+let selectedQuestion = {};
+let counter = 0;
+
+let addQuestionBtn = document.getElementById("questionnaire");
+let selectedQuestionDevTag = document.getElementById("selectedQuestionDevTag");
+
+addQuestionBtn.addEventListener("click", async (e) => {
+  e.preventDefault();
+
+  const id = `questionCategory-${counter++}`;
+  let QuestionsData = await getAllQuestionData();
+  let letQueCategories = [];
+  QuestionsData.map((que) => {
+    if (!letQueCategories.includes(que.categoryName)) {
+      let isAlreadyAdded = false;
+      Object.keys(selectedQuestion).map((idx) => {
+        if (selectedQuestion[idx].category === que.categoryName) {
+          isAlreadyAdded = true;
+        }
+      });
+      if (!isAlreadyAdded) {
+        letQueCategories.push(que.categoryName);
+      }
+    }
+  });
+
+  const container = document.createElement("div");
+  container.className = "selection-container";
+  container.id = id;
+
+  const closeBtn = document.createElement("button");
+  closeBtn.className = "remove-btn";
+  closeBtn.innerHTML = "Remove";
+  closeBtn.onclick = () => {
+    container.remove();
+    delete selectedQuestion[id];
+  };
+
+  const questionCategories = document.createElement("select");
+  questionCategories.innerHTML =
+    '<option value="">Select Question Category...</option>';
+  letQueCategories.forEach((cat) => {
+    questionCategories.innerHTML += `<option value="${cat}">${cat}</option>`;
+  });
+
+  const questions = document.createElement("select");
+  questions.multiple = true;
+  questions.hidden = true;
+
+  const selectedQuestionsDiv = document.createElement("div");
+  selectedQuestionsDiv.hidden = true;
+  selectedQuestionsDiv.className = "selected-questions";
+
+  questionCategories.addEventListener("change", () => {
+    const categoryOfQquestion = questionCategories.value;
+    // console.log(categoryOfQquestion);
+    selectedQuestionsDiv.hidden = true;
+    selectedQuestionsDiv.innerHTML = "";
+
+    if (categoryOfQquestion) {
+      questions.hidden = false;
+      questions.innerHTML = "";
+      let filterQuestionbasedonCategories = QuestionsData.filter(
+        (que) => que.categoryName === categoryOfQquestion
+      );
+      filterQuestionbasedonCategories.forEach((que) => {
+        questions.innerHTML += `<option value="${que.questionId}">${que.questionText}</option>`;
+      });
+
+      selectedQuestion[id] = {
+        category: categoryOfQquestion,
+        questions: [],
+      };
+    } else {
+      questions.hidden = true;
+      selectedQuestionsDiv.className = "selected-questions";
+      selectedQuestionsDiv.hidden = true;
+      delete selectedQuestion[id];
+    }
+  });
+
+  questions.addEventListener("change", (e) => {
+    selectedQuestion[id].questions = Array.from(questions.selectedOptions).map(
+      (que) => que.value
+    );
+
+    // console.log(selectedQuestion);
+
+    selectedQuestionListUpdate(
+      selectedQuestionsDiv,
+      id,
+      QuestionsData,
+      letQueCategories
+    );
+  });
+
+  container.appendChild(closeBtn);
+  container.appendChild(questionCategories);
+  container.appendChild(questions);
+  container.appendChild(selectedQuestionsDiv);
+  selectedQuestionDevTag.appendChild(container);
+});
+
+const selectedQuestionListUpdate = (
+  container,
+  id,
+  questionsData,
+  QuestioncategoriesData
+) => {
+  const questions = selectedQuestion[id];
+
+  if (!questions) return;
+
+  if (questions.questions.length === 0) {
+    container.innerHTML = "";
+    container.hidden = true;
+    return;
+  }
+
+  container.className = "selected-questions";
+  container.innerHTML = `<p>Selected Question:</p>`;
+  container.hidden = false;
+
+  questions.questions.forEach((que) => {
+    const divQue = document.createElement("div");
+    divQue.className = "question-item";
+    divQue.innerHTML = `<div>${que}</div><button onclick="removeQuestion('${id}', '${que}','${questionsData}', '${QuestioncategoriesData}')">
+                          &times;
+                      </button>`;
+    container.appendChild(divQue);
+  });
+};
+
+const removeQuestion = (
+  id,
+  questionId,
+  questionsData,
+  QuestioncategoriesData
+) => {
+  const que = selectedQuestion[id];
+  if (!que) return;
+
+  que.questions = que.questions.filter((queId) => queId !== questionId);
+  const container = document.getElementById(id);
+  const questionsDiv = container.querySelector(".selected-questions");
+  const questionsSleect = container.querySelector("select[multiple]");
+  if (que.questions.length === 0) {
+    questionsDiv.hidden = true;
+    questionsDiv.innerHTML = "";
+  }
+
+  Array.from(questionsSleect.options).forEach((que) => {
+    if (que.value === questionId) que.selected = false;
+  });
+
+  selectedQuestionListUpdate(
+    questionsDiv,
+    id,
+    questionsData,
+    QuestioncategoriesData
+  );
+};
+
 surveyForm.addEventListener("submit", (e) => {
   e.preventDefault();
   userMappingDataInput.value = JSON.stringify(userMappingData);
+
+  let finalData = {};
+
+  Object.values(selectedQuestion).map(({ category, questions }) => {
+    if (questions.length > 0) {
+      finalData[category] = questions;
+    }
+  });
+
+  selectedQuestionsInput.value = JSON.stringify(finalData);
+
+  // console.log("Submitted data:", finalData);
   e.target.submit();
   // surveyForm.submit();
 });

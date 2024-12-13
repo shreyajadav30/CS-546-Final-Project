@@ -220,3 +220,41 @@ input[type="submit"]:hover {
 #dropdown-container {
   position: relative;
 }
+
+.selection-container {
+  border: 1px solid #ccc;
+  margin: 10px 0;
+  padding: 15px;
+}
+
+.selected-questions {
+  margin-top: 10px;
+  padding: 8px;
+  background: #f5f5f5;
+}
+
+.question-item {
+  display: inline-block;
+  background: #e0e0e0;
+  padding: 5px 10px;
+  margin: 2px;
+  border-radius: 3px;
+}
+.question-item button {
+  margin-left: 5px;
+  border: none;
+  background: none;
+  color: red;
+  cursor: pointer;
+}
+
+.question-item {
+  width: 100px;
+  display: flex;
+}
+.question-item > div {
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

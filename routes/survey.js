@@ -3,6 +3,7 @@ import * as surveyData from "../data/survey.js";
 import * as userData from "../data/users.js";
 import * as helper from "../utils/helpers/survey.js";
 import nodemailer from "nodemailer";
+import { questionsDataFunctions } from "../data/index.js";
 
 const router = Router();
 router.get("/", async (req, res) => {
@@ -39,6 +40,7 @@ router.post("/", async (req, res, next) => {
       questionnaire,
       status,
       userMappingData,
+      selectedQuestions,
     } = surData;
 
     surveyName = helper.checkString(surveyName, "Survey Name");
@@ -46,6 +48,7 @@ router.post("/", async (req, res, next) => {
     endDate = helper.eDateValidate(startDate, endDate);
     status = helper.statusValid(status);
     userMappingData = JSON.parse(userMappingData);
+    selectedQuestions = JSON.parse(selectedQuestions);
     //surveyedFor = helper.checkId(surveyedFor,"Survey For");
     //surveyedBy = helper.checkId(surveyedBy,"Survey By");
 
@@ -91,7 +94,8 @@ router.post("/", async (req, res, next) => {
       endDate,
       questionnaire,
       status,
-      userMappingData
+      userMappingData,
+      selectedQuestions
     );
 
     if (surveyDetails.acknowledged) {
@@ -102,6 +106,16 @@ router.post("/", async (req, res, next) => {
   } catch (e) {
     console.log(e);
     return res.status(500).json({ error: "500 : Internal Server Error" });
+  }
+});
+
+router.route("/getAllQuestion").get(async (req, res) => {
+  try {
+    // Get question according to survey id
+    const questions = await questionsDataFunctions.getAllQuestions();
+    return res.status(200).json(questions);
+  } catch (e) {
+    return res.status(500).json({ error: e.message });
   }
 });
 
