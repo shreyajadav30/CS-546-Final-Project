@@ -1,4 +1,4 @@
-import { survey } from "../config/mongoCollections.js";
+import { survey, users } from "../config/mongoCollections.js";
 import * as helper from "../utils/helpers/survey.js";
 import * as userData from "../data/users.js";
 import { ObjectId } from "mongodb";
@@ -22,6 +22,9 @@ export const addSurvey = async (
   ) {
     throw "Please enter Survey Name, startDate, endDate and status!";
   }
+
+  const usersCollection = await users();
+
   surveyName = helper.checkString(surveyName, "Survey Name");
   startDate = helper.sDateValidate(startDate);
   endDate = helper.eDateValidate(startDate, endDate);
@@ -30,11 +33,23 @@ export const addSurvey = async (
   //surveyedBy = helper.checkString(surveyedBy,"Survey By");
 
   let userMapping = [];
+  let userServayingFor = {};
 
   Object.keys(userMappingData).map((surveyedFor) => {
     let surveyUsers = {};
     surveyUsers["surveyedFor"] = surveyedFor;
     surveyUsers["surveyedBy"] = userMappingData[surveyedFor];
+
+    if (userMappingData[surveyedFor].length > 0) {
+      userMappingData[surveyedFor].map((respondant) => {
+        if (Object.keys(userServayingFor).includes(respondant)) {
+          userServayingFor[respondant].push(surveyedFor);
+        } else {
+          userServayingFor[respondant] = [surveyedFor];
+        }
+      });
+    }
+
     userMapping.push(surveyUsers);
   });
 
@@ -63,6 +78,23 @@ export const addSurvey = async (
     throw "Survey data is not inserted.";
   }
   const newSurveyId = insertedSurvey.insertedId.toString();
+
+  Object.keys(userServayingFor).map(async (userMap) => {
+    const updatedUserInfo = await usersCollection.updateOne(
+      { _id: ObjectId.createFromHexString(userMap) },
+      {
+        $push: {
+          surveys: {
+            surveyId: insertedSurvey.insertedId,
+            surveyingFor: userServayingFor[userMap],
+          },
+        },
+      }
+    );
+    if (!updatedUserInfo) {
+      throw "could not update team successfully because it doesnot exists anymore.";
+    }
+  });
 
   return insertedSurvey;
 };
