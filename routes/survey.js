@@ -3,6 +3,7 @@ import * as surveyData from "../data/survey.js";
 import * as userData from "../data/users.js";
 import * as helper from "../utils/helpers/survey.js";
 import nodemailer from "nodemailer";
+import { questionsDataFunctions } from "../data/index.js";
 
 const router = Router();
 router.get("/", async (req, res) => {
@@ -38,43 +39,54 @@ router.post("/", async (req, res, next) => {
       endDate,
       questionnaire,
       status,
-      surveyedFor,
-      surveyedBy,
+      userMappingData,
+      selectedQuestions,
     } = surData;
 
     surveyName = helper.checkString(surveyName, "Survey Name");
     startDate = helper.sDateValidate(startDate);
     endDate = helper.eDateValidate(startDate, endDate);
     status = helper.statusValid(status);
+    userMappingData = JSON.parse(userMappingData);
+    selectedQuestions = JSON.parse(selectedQuestions);
     //surveyedFor = helper.checkId(surveyedFor,"Survey For");
     //surveyedBy = helper.checkId(surveyedBy,"Survey By");
-    let userEmail = [];
 
-    surveyedBy.forEach(async (val) => {
-      const userList = await userData.getUserById(val);
-      userEmail.push(userList.email);
-    });
-
-    const mailOptions = {
-      from: "SurveySync100@gmail.com",
-      to: userEmail,
-      subject: "Thank you for completing the survey!",
-      text: `
+    Object.keys(userMappingData).map(async (user) => {
+      let currentuser = await userData.getUserById(user);
+      let userEmail = [];
+      userMappingData[user].forEach(async (val) => {
+        const userList = await userData.getUserById(val);
+        userEmail.push(userList.email);
+      });
+      const mailOptions = {
+        from: "SurveySync100@gmail.com",
+        to: userEmail,
+        subject: "Thank you for completing the survey!",
+        text: `
             Hi,
 
             Thank you for participating in our survey. 
             Your feedback is valuable to us!
 
             Survey Title: ${surveyName}
+            You are surveying for : ${currentuser.firstName} ${
+          currentuser.lastName
+        }
             Date: ${new Date().toLocaleDateString()}
             
             Best regards,
             The Survey Team
         `,
-    };
+      };
 
-    await transporter.sendMail(mailOptions);
-    console.log(`Email sent to ${userEmail}`);
+      await transporter.sendMail(mailOptions);
+      console.log(`Email sent to ${userEmail}`);
+    });
+    // surveyedBy.forEach(async (val) => {
+    //   const userList = await userData.getUserById(val);
+    //   userEmail.push(userList.email);
+    // });
 
     const surveyDetails = await surveyData.addSurvey(
       surveyName,
@@ -82,8 +94,8 @@ router.post("/", async (req, res, next) => {
       endDate,
       questionnaire,
       status,
-      surveyedFor,
-      surveyedBy
+      userMappingData,
+      selectedQuestions
     );
 
     if (surveyDetails.acknowledged) {
@@ -94,6 +106,16 @@ router.post("/", async (req, res, next) => {
   } catch (e) {
     console.log(e);
     return res.status(500).json({ error: "500 : Internal Server Error" });
+  }
+});
+
+router.route("/getAllQuestion").get(async (req, res) => {
+  try {
+    // Get question according to survey id
+    const questions = await questionsDataFunctions.getAllQuestions();
+    return res.status(200).json(questions);
+  } catch (e) {
+    return res.status(500).json({ error: e.message });
   }
 });
 
