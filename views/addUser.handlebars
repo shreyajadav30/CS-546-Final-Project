@@ -1,3 +1,4 @@
+{{#if (isEqual session.user.role "admin")}}
 <div class="add-form">
   <form action="/users/addUser" method="post">
     <input type="hidden" name="_id" value="{{user._id}}" />
@@ -23,8 +24,6 @@
         value="{{user.lastName}}"
       />
     </div>
-    {{! <div class="row mb-3">
-      <div class="col"> }}
     <div class="form">
       <label>Email</label>
       <input
@@ -35,35 +34,18 @@
         required
         value="{{user.email}}"
       />
-      {{! </div> }}
     </div>
-    {{! <div class="col"> }}
     <div class="form">
-      <label>Password</label>
-      <input
-        id="password"
-        class="form-control"
-        name="password"
-        placeholder="password"
-        required
-        value="{{user.password}}"
-      />
-    </div>
-    {{! </div> }}
-    {{! <div class="col"> }}
-    <div class="form">
-      <label>Username</label>
+      <label>User Id</label>
       <input
         class="form-control"
-        id="username"
-        name="username"
-        placeholder="username"
+        id="userId"
+        name="userId"
+        placeholder="userId"
         required
-        value="{{user.username}}"
+        value="{{user.userId}}"
       />
     </div>
-    {{! </div> }}
-    {{! <div class="col"> }}
     <div class="form">
       <label>Role</label>
       <input
@@ -75,21 +57,6 @@
         value="{{user.role}}"
       />
     </div>
-    {{! </div>
-      <div class="col"> }}
-    <div class="form">
-      <label>Survey</label>
-      <input
-        class="form-control"
-        id="survey"
-        name="survey"
-        placeholder="survey"
-        required
-        value="{{user.survey}}"
-      />
-    </div>
-    {{! </div> }}
-    {{! </div> }}
     <div>
       <a href="/users/" class="button">☰ View All</a>
       <button type="submit" class="button">
@@ -98,3 +65,70 @@
     </div>
   </form>
 </div>
+{{else}}
+  <div class="add-form">
+  <form action="/users/addUser" method="post">
+    <input type="hidden" name="_id" value="{{user._id}}" />
+    <div class="form">
+      <label>First Name</label>
+      <input
+        id="firstName"
+        class="form-control"
+        name="firstName"
+        placeholder="firstName"
+        required
+        value="{{user.firstName}}"
+      />
+    </div>
+    <div class="form">
+      <label>Last Name</label>
+      <input
+        class="form-control"
+        id="lastName"
+        name="lastName"
+        placeholder="lastName"
+        required
+        value="{{user.lastName}}"
+      />
+    </div>
+    <div class="form">
+      <label>Email</label>
+      <input
+        id="email"
+        name="email"
+        class="form-control"
+        placeholder="email"
+        required
+        value="{{user.email}}"
+      />
+    </div>
+    <div class="form">
+      <label>User Id</label>
+      <input
+        class="form-control"
+        id="userId"
+        name="userId"
+        placeholder="userId"
+        required
+        value="{{user.userId}}"
+      />
+    </div>
+    <div class="form">
+      <label>Role</label>
+      <input
+        class="form-control"
+        id="role"
+        name="role"
+        placeholder="role"
+        required
+        value="{{user.role}}"
+      />
+    </div>
+    <div>
+      <button type="submit" class="button">
+        Submit
+      </button>
+    </div>
+  </form>
+</div>
+{{/if}}

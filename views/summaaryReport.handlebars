@@ -1,0 +1,237 @@
+{{!-- <!DOCTYPE html>
+
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        #table {
+            page-break-after: always;
+        }
+    </style>
+</head> --}}
+
+{{!-- <body style="margin: 30px;"> --}}
+    <div id="table" style="align-items: center;">
+        <h1 style="font-size:33px; text-align:center">360 Degree Feedback Survey</h1>
+        <!-- <img src="https://ibb.co/StyM1Bt" sizes="400" style="width:400px;height:400px;margin:20px auto" alt="Logo"> -->
+        {{!-- <img src="https://imgtr.ee/images/2023/10/05/a9395f2b033e461d213ab818b3463bd6.png"
+            style="display: block;margin-left: auto; margin-right: auto;width: 50%;" alt="Logo" /> --}}
+    </div>
+    <div id="table">
+        <p style="font-size:15px;padding: 20px;text-align: center;">The Following is a Summary of the Group of
+            Evaluators
+            who were invited to Participate and
+            Provide Feedback for You.</p>
+        <table style="margin:10px auto;border-collapse:collapse">
+            <tr>
+                <th style="padding:5px;width: 150px;color: #5A5A5A;">
+                    Relation Type Key</th>
+                <th style="padding:5px;width: 100px;color: #5A5A5A;">
+                    Nominated</th>
+                <th style="padding:5px;width: 100px;color: #5A5A5A;">
+                    Completed</th>
+                <th style="padding:5px;width: 220px;color: #5A5A5A;">
+                    Completion Rate</th>
+            </tr>
+
+            {{#each data1}}
+                <tr>
+                    <td style="border-bottom:1px solid #c4c7c7;padding:5px;width: 150px;text-align: center;">
+                        <div
+                            style="display: flex;  align-items: center; flex-direction: column;  justify-content: center;align-self: center;">
+                            <div
+                                style="background-color: #003c98; border-radius: 50%;  display: inline-block; color: white; width: 30px; height: 30px;">
+                                <div
+                                    style="display: flex; height: 100%; width: 100%; justify-content: center; align-items: center; text-align: center; ; margin-top: 4px;">
+                                    {{substring relation_type_key 0 1}}
+                                </div>
+
+                            </div>
+                            <div
+                                style="width: 80px; display: inline-block; align-self: center; text-align: left; vertical-align: middle;">
+                                {{relation_type_key}}
+                            </div>
+                        </div>
+                    </td>
+                    <td style="border-bottom:1px solid #c4c7c7;padding:5px;width: 100px;text-align: center;">
+                        {{nominated}}
+                    </td>
+                    <td style="border-bottom:1px solid #c4c7c7;padding:5px;width: 100px;text-align: center;">
+                        {{completed}}
+                    </td>
+                    <td style="border-bottom:1px solid #c4c7c7;padding:5px;width: 220px;text-align: center;">
+                        <div style="display: flex; flex-direction:column;">
+                            <div
+                                style="width: 160px; height: 5px;background-color: #9e9c9c; border-radius: 20px;  display: inline-block;">
+                                <div
+                                    style="width: {{completion_ratio}}%;height: 5px; background-color: rgb(115, 219, 95); border-radius: 20px;">
+                                </div>
+                            </div>
+                            <div style="display: inline-block;width: 50px;">
+                                {{completion_ratio}} %
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            {{/each}}
+        </table>
+    </div>
+    <h1 style="font-weight: bold; margin: 30px">Competency Summary</h1>
+    <div id="table" style="margin: 30px; border: 1px solid #9c9c9c; overflow: auto;border-radius: 10px;">
+        <div style="font-size:15px;padding: 15px;background-color:#cfcdcd;">
+            <h1>Overall Competency Summary</h1>
+            <p style="font-size:15px;text-align: justify;">This section will give you an idea of the
+                overall
+                score of an evaluator.</p>
+        </div>
+        <div style="float:left; width: 30%; text-align: center; margin-top: 40px; ">
+            <h3>Overall Score</h3>
+            <p>
+                {{data2.[0].overall_score}} / {{data2.[0].total_rating}}
+            </p>
+        </div>
+        <div style="float: right; width: 65%; margin-right: 30px;">
+            <table style="margin:20px auto;border-collapse:collapse">
+                {{#each data2}}
+                    <tr>
+                        <td
+                            style="border-bottom:1px solid #686767;padding:5px;width: 250px;text-align: left; text-transform: capitalize;">
+                            <div
+                                style="display: flex;  align-items: center; flex-direction: column;  justify-content: center;align-self: center;">
+                                <div
+                                    style="background-color: #003c98; border-radius: 50%;  display: inline-block; color: white; width: 30px; height: 30px;">
+                                    <div
+                                        style="display: flex; height: 100%; width: 100%; justify-content: center; align-items: center; text-align: center;  margin-top: 4px;">
+                                        {{substring question_category_key 0 1}}
+                                    </div>
+                                </div>
+                                <div
+                                    style="width: 140px; display: inline-block; align-self: center; text-align: left; vertical-align: middle;">
+                                    {{question_category_key}}
+                                </div>
+                            </div>
+                        </td>
+                        <td style="border-bottom:1px solid #9c9c9c;padding:5px;width: 200px;text-align: center;">
+                            <div style="flex-direction: row; display: inline-block; ">
+                                {{#each range (range 0 total_rating)}}
+                                    {{#if (lt i avg_skill_cat)}}
+                                        {{#if (eq (mod avg_skill_cat 1) 0.0) }}
+                                            <span class="fa fa-star" style="display: inline-block; color: gold"></span>
+                                        {{else}}
+                                            <span class="fa fa-star-half-o" style="display: inline-block; color: gold"></span>
+                                        {{/if}}
+                                    {{else}}
+                                        <span class="fa fa-star" style="color: #cfcdcd;"></span>
+                                    {{/if}}
+                                {{/each}}
+                            </div>
+                        </td>
+                        <td style="border-bottom:1px solid #9c9c9c;width: 60px;text-align: center;">
+                            {{avg_skill_cat}}
+                        </td>
+                    </tr>
+                {{/each}}
+            </table>
+        </div>
+    </div>
+
+    <!-- Strengths Section -->
+    <div id="table">
+        <h1 style="font-weight: bold; text-align: center;">Your Strengths</h1>
+        <p style="font-size: 15px; padding: 20px; text-align: center;">Below are the statements where you received the
+            highest ratings and are considered your key strengths.</p>
+        <table style="margin: 20px auto; border-collapse: collapse">
+            {{#each data7}}
+                <tr>
+                    <td style="border: 1px solid #9c9c9c; padding: 5px; width: 180px; text-align: center;">
+                        {{strenghts}}
+                    </td>
+                    <td style="border: 1px solid #9c9c9c; padding: 5px; width: 180px; text-align: left; text-transform: capitalize;">
+                        {{question_category_key}}
+                    </td>
+                </tr>
+            {{/each}}
+        </table>
+    </div>
+
+    <!-- Areas of Improvement Section -->
+    <div id="table">
+        <h1 style="font-weight: bold; text-align: center;">Areas of Improvement</h1>
+        <p style="font-size: 15px; padding: 20px; text-align: center;">Below are the statements where you received the
+            lowest ratings and are considered your areas of improvements.</p>
+        <table style="margin: 20px auto; border-collapse: collapse">
+            {{#each data8}}
+                <tr>
+                    <td style="border: 1px solid #9c9c9c; padding: 5px; width: 180px; text-align: center;">
+                        {{weakness}}
+                    </td>
+                    <td style="border: 1px solid #9c9c9c; padding: 5px; width: 180px; text-align: left; text-transform: capitalize;">
+                        {{question_category_key}}
+                    </td>
+                </tr>
+            {{/each}}
+        </table>
+    </div>
+
+    <!-- Hidden Strengths Section -->
+    <div id="table">
+        <h1 style="font-weight: bold; text-align: center;">Hidden Strengths</h1>
+        <p style="font-size: 15px; padding: 20px; text-align: center;">Hidden Strengths are statements where you rated
+            yourself lower compared to the average rating of other respondents.</p>
+        <table style="margin: 20px auto; border-collapse: collapse">
+            <tr>
+                <th style="border-bottom:1px solid #9c9c9c;padding:5px;width: 180px;color: #636161;">
+                    Areas</th>
+                <th style="border-bottom:1px solid #9c9c9c;padding:5px;width: 180px;color: #636161;">
+                    Your Rating</th>
+                <th style="border-bottom:1px solid #9c9c9c;padding:5px;width: 180px;color: #636161;">
+                    Others</th>
+            </tr>
+            {{#each data9}}
+                <tr>
+                    <td style="border-bottom: 1px solid #9c9c9c; padding: 5px; width: 180px; text-align: justify; text-transform: capitalize">
+                        {{question_category_key}}
+                    </td>
+                    <td style="border-bottom: 1px solid #9c9c9c; padding: 5px; width: 180px; text-align: center;">
+                        {{your_rating}}
+                    </td>
+                    <td style="border-bottom: 1px solid #9c9c9c; padding: 5px; width: 180px; text-align: center;">
+                        {{others}}
+                    </td>
+                </tr>
+            {{/each}}
+        </table>
+    </div>
+
+    <!-- Blind Spots Section -->
+    <div id="table">
+        <h1 style="font-weight: bold; text-align: center;">Blind Spots</h1>
+        <p style="font-size: 15px; padding: 20px; text-align: center;">Blind Spots are statements where you rated
+            yourself higher compared to the average rating of other respondents. These may be your potential areas of improvement.</p>
+        <table style="margin: 20px auto; border-collapse: collapse">
+            <tr>
+                <th style="border-bottom:1px solid #9c9c9c;padding:5px;width: 180px;color: #636161;">
+                    Areas</th>
+                <th style="border-bottom:1px solid #9c9c9c;padding:5px;width: 180px;color: #636161;">
+                    Your Rating</th>
+                <th style="border-bottom:1px solid #9c9c9c;padding:5px;width: 180px;color: #636161;">
+                    Others</th>
+            </tr>
+            {{#each data10}}
+                <tr>
+                    <td style="border-bottom: 1px solid #9c9c9c; padding: 5px; width: 180px; text-align: justify; text-transform: capitalize">
+                        {{question_category_key}}
+                    </td>
+                    <td style="border-bottom: 1px solid #9c9c9c; padding: 5px; width: 180px; text-align: center;">
+                        {{your_rating}}
+                    </td>
+                    <td style="border-bottom: 1px solid #9c9c9c; padding: 5px; width: 180px; text-align: center;">
+                        {{others}}
+                    </td>
+                </tr>
+            {{/each}}
+        </table>
+    </div>
+
+    <h1 style="margin-top: 50%;text-align: center;font-size: 100px;">Thank You</h1>
+{{!-- </body>
+</html> --}}

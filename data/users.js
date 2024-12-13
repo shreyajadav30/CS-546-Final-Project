@@ -182,6 +182,7 @@ export const signInUser = async (userId, password) => {
   }
 
   return {
+    _id: user._id,
     firstName: user.firstName,
     lastName: user.lastName,
     userId: user.userId,
@@ -229,10 +230,8 @@ export const updateUser = async (
   firstName,
   lastName,
   email,
-  password,
-  username,
-  role,
-  survey
+  userId,
+  role
 ) => {
   // validateInputsId(id.trim());
 
@@ -242,10 +241,8 @@ export const updateUser = async (
     firstName: firstName.trim(),
     lastName: lastName.trim(),
     email: email.trim(),
-    password: password.trim(),
-    username: username.trim(),
-    role: role.trim(),
-    survey: survey.trim(),
+    userId: userId.trim(),
+    role: role.trim()
   };
 
   const updatedUserInfo = await usersCollection.updateOne(
@@ -257,4 +254,22 @@ export const updateUser = async (
     throw "could not update team successfully because it doesnot exists anymore.";
   }
   return updatedUserInfo;
+};
+
+export const searchUser = async (name) => {
+  // validateInputsId(id);
+ let userName =[]
+  const usersCollection = await users();
+  // console.log('[[[[[[[');
+  const query = {
+    $or: [
+      { firstName: { $regex: name, $options: 'i' } },  
+      { lastName: { $regex: name, $options: 'i' } },   
+      { email: { $regex: name, $options: 'i' } } 
+    ]
+  };
+  userName = await usersCollection.find(query).limit(50).toArray()
+  // console.log('query', userName);
+  if (userName === null) throw "No user with that name found.";
+  return userName;
 };
