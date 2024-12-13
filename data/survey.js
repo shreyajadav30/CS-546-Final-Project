@@ -98,3 +98,15 @@ export const addSurvey = async (
 
   return insertedSurvey;
 };
+
+export const getSurveyById = async (id) => {
+  // validateInputsId(id);
+
+  const surveyCollection = await survey();
+  const curSurvey = await surveyCollection.findOne({
+    _id: ObjectId.createFromHexString(id),
+  });
+  if (curSurvey === null) throw "No Survey with that id.";
+  curSurvey._id = curSurvey._id.toString();
+  return curSurvey;
+};

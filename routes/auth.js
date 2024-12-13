@@ -211,11 +211,12 @@ router
           role: newUser.role,
           email: newUser.email,
         };
-        if (newUser.role === "admin") {
-          res.redirect("/admin");
-        } else if (newUser.role === "user") {
-          res.redirect("/user");
-        }
+        // if (newUser.role === "admin") {
+        //   res.redirect("/admin");
+        // } else if (newUser.role === "user") {
+        //   res.redirect("/user");
+        // }
+        res.redirect("/dashboard");
       }
     } catch (e) {
       console.log(e);

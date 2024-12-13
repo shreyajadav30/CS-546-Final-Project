@@ -158,7 +158,7 @@ export const signInUser = async (userId, password) => {
     // mongo check case insensitvely : ref: https://stackoverflow.com/questions/8246019/case-insensitive-search-in-mongo
 
     user = await usersCollection.findOne({
-      userId: { $regex: new RegExp(userId, "i") },
+      userId: { $regex: new RegExp(`^${userId}$`, "i") },
     });
 
     if (!user) {
@@ -211,6 +211,19 @@ export const getUserById = async (id) => {
   userbyid._id = userbyid._id.toString();
   return userbyid;
 };
+export const getAllUserWithProvidedIds = async (ids) => {
+  // validateInputsId(id);
+  const objectIds = ids.map((id) => ObjectId.createFromHexString(id));
+
+  const usersCollection = await users();
+  let userbyid = await usersCollection
+    .find({ _id: { $in: objectIds } })
+    .toArray();
+
+  if (!userbyid) throw "No user with that id.";
+  // userbyid = userbyid.map((id) => id.toString());
+  return userbyid;
+};
 
 export const removeUser = async (id) => {
   // validateInputsId(id);
@@ -242,7 +255,7 @@ export const updateUser = async (
     lastName: lastName.trim(),
     email: email.trim(),
     userId: userId.trim(),
-    role: role.trim()
+    role: role.trim(),
   };
 
   const updatedUserInfo = await usersCollection.updateOne(
@@ -258,17 +271,17 @@ export const updateUser = async (
 
 export const searchUser = async (name) => {
   // validateInputsId(id);
- let userName =[]
+  let userName = [];
   const usersCollection = await users();
   // console.log('[[[[[[[');
   const query = {
     $or: [
-      { firstName: { $regex: name, $options: 'i' } },  
-      { lastName: { $regex: name, $options: 'i' } },   
-      { email: { $regex: name, $options: 'i' } } 
-    ]
+      { firstName: { $regex: name, $options: "i" } },
+      { lastName: { $regex: name, $options: "i" } },
+      { email: { $regex: name, $options: "i" } },
+    ],
   };
-  userName = await usersCollection.find(query).limit(50).toArray()
+  userName = await usersCollection.find(query).limit(50).toArray();
   // console.log('query', userName);
   if (userName === null) throw "No user with that name found.";
   return userName;
