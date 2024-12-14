@@ -1,6 +1,21 @@
-{{#if (isEqual session.user.role "admin")}}
+{{!-- {{#if (isEqual session.user.role "admin")}} --}}
+{{#if hasErrors}}
+    <div id="serverErrorDiv">
+      <ul class="error">
+        {{#each errors}}
+          <li>{{this}}</li>
+        {{/each}}
+      </ul>
+    </div>
+  {{/if}}
+  <div id="errorDiv" hidden>
+    <ul id="errorDivUl" class="error">
+
+    </ul>
+  </div>
+  <div class="formDiv">
 <div class="add-form">
-  <form action="/users/addUser" method="post">
+  <form action="/users/addUser" method="post" id="addUser" name="addUser">
     <input type="hidden" name="_id" value="{{user._id}}" />
     <div class="form">
       <label>First Name</label>
@@ -65,7 +80,7 @@
     </div>
   </form>
 </div>
-{{else}}
+{{!-- {{else}}
   <div class="add-form">
   <form action="/users/addUser" method="post">
     <input type="hidden" name="_id" value="{{user._id}}" />
@@ -131,4 +146,4 @@
     </div>
   </form>
 </div>
-{{/if}}
+{{/if}} --}}
