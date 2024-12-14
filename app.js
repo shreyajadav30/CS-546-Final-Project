@@ -2,6 +2,8 @@ import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import exphbs from "express-handlebars";
+import path from "path";
+import { fileURLToPath } from "url";
 
 import session from "express-session";
 
@@ -17,6 +19,10 @@ dotenv.config();
 const PORT = process.env.PORT || 3000;
 
 const app = express();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.use(express.static(path.join(__dirname, "public")));
 
 app.use(
   session({
@@ -52,10 +58,11 @@ app.engine(
       isEqual: (a, b) => a === b,
       add: (a, b) => a + b,
       or: (a, b) => a || b,
+      and: (a, b) => a && b,
       range: (start, end) => {
         const range = [];
         for (let i = start; i <= end; i++) {
-            range.push(i);
+          range.push(i);
         }
         return range;
       },

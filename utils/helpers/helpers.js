@@ -27,3 +27,27 @@ export function isValidEmail(email) {
   const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   return emailRegex.test(email);
 }
+
+export const ratingValidation = (rating) => {
+  rating = checkString(rating);
+
+  rating = parseInt(rating, 10);
+  // console.log("====================================");
+  // console.log(rating, isNaN(rating));
+  // console.log("====================================");
+
+  if (isNaN(rating)) {
+    throw "Invalid rating";
+  }
+
+  return rating;
+};
+
+export const isValidArray = (arr, paramName = "Array") => {
+  if (!arr) throw `You must provide ${paramName}`;
+  if (typeof arr !== "object" || !Array.isArray(arr))
+    throw `Invalid ${paramName}, ${paramName} should be an array`;
+  if (typeof arr === "object" && !Array.isArray(arr))
+    throw `Invalid ${paramName}, ${paramName} should be an array`;
+  if (!arr.length) throw `${paramName} argument should have at least one value`;
+};

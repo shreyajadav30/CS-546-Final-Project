@@ -226,23 +226,26 @@ export const getUserById = async (id) => {
   return userbyid;
 };
 export const getAllUserWithProvidedIds = async (ids) => {
+  if (!ids) {
+    return [];
+  }
   // validateInputsId(id);
   const objectIds = ids.map((id) => ObjectId.createFromHexString(id));
 
   const usersCollection = await users();
   let errors = [];
-  try {
-    ids = checkId(ids, "id");
-  } catch (e) {
-    errors.push(e);
-  }
-  if (errors.length > 0) {
-    // console.log('errrrrrr', errors);
-    return {
-      hasError: true,
-      errors,
-    };
-  }
+  // try {
+  //   ids = checkId(ids, "id");
+  // } catch (e) {
+  //   errors.push(e);
+  // }
+  // if (errors.length > 0) {
+  //   // console.log('errrrrrr', errors);
+  //   return {
+  //     hasError: true,
+  //     errors,
+  //   };
+  // }
   let userbyid = await usersCollection
     .find({ _id: { $in: objectIds } })
     .toArray();
@@ -322,7 +325,6 @@ export const updateUser = async (
     if (!isValidEmail(email)) {
       throw "Invalid email!!";
     }
-    
   } catch (e) {
     errors.push(e);
   }
@@ -335,8 +337,6 @@ export const updateUser = async (
     if (userId.length < 5 || userId.length > 10) {
       throw "userId should be at least 5 characters long with a max of 10 characters!!";
     }
-
-    
   } catch (e) {
     errors.push(e);
   }
@@ -356,8 +356,7 @@ export const updateUser = async (
       errors,
     };
   }
-  
-  
+
   const updateUserData = {
     firstName: firstName.trim(),
     lastName: lastName.trim(),
@@ -366,19 +365,19 @@ export const updateUser = async (
     role: role.trim(),
   };
   // console.log('111111', updateUserData);
-  
+
   const updatedUserInfo = await usersCollection.updateOne(
     { _id: ObjectId.createFromHexString(_id) },
     { $set: updateUserData }
-    );
+  );
 
-    // console.log('2222', updatedUserInfo);
-    
-    if (!updatedUserInfo) {
-      throw "could not update user successfully because it doesnot exists anymore.";
-    }
-    return updatedUserInfo;
-  };
+  // console.log('2222', updatedUserInfo);
+
+  if (!updatedUserInfo) {
+    throw "could not update user successfully because it doesnot exists anymore.";
+  }
+  return updatedUserInfo;
+};
 
 export const searchUser = async (name) => {
   const usersCollection = await users();
@@ -401,9 +400,9 @@ export const searchUser = async (name) => {
     };
   }
   // validateInputsId(id);
-  name = name.trim()
+  name = name.trim();
   // console.log('name...',name);
- let userName =[]
+  let userName = [];
   // console.log('[[[[[[[');
   const query = {
     $or: [

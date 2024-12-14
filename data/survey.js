@@ -89,6 +89,7 @@ export const addSurvey = async (
           surveys: {
             surveyId: insertedSurvey.insertedId,
             surveyingFor: userServayingFor[userMap],
+            responses: [],
           },
         },
       }
@@ -113,13 +114,15 @@ export const getSurveyById = async (id) => {
   return curSurvey;
 };
 
-export const getSurveyList = async(userId) => {
+export const getSurveyList = async (userId) => {
   const surveyCollection = await survey();
-  const curList = await surveyCollection.find({ 'surveyCreated': userId }).toArray();
+  const curList = await surveyCollection
+    .find({ surveyCreated: userId })
+    .toArray();
   return curList;
-}
+};
 
-export const removeSurvey = async(id) => {
+export const removeSurvey = async (id) => {
   const surveyCollection = await survey();
   const surveydeletionInfo = await surveyCollection.findOneAndDelete({
     _id: ObjectId.createFromHexString(id),
@@ -129,8 +132,6 @@ export const removeSurvey = async(id) => {
     throw `Could not delete survey with id of ${id}, as it doesnot exists.`;
   }
   return { _id: ObjectId.createFromHexString(id) };
-}
+};
 
-export const updateSurvey = async(id) => {
-
-}
+export const updateSurvey = async (id) => {};
