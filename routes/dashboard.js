@@ -62,9 +62,6 @@ router.route("/").get(async (req, res) => {
 
   let surveyDetails = await getSurveyDetails(user.surveys);
 
-  console.log(surveyDetails);
-  
-
   res.status(200).render("dashboard", { title: "Dashboard", surveyDetails });
 });
 
