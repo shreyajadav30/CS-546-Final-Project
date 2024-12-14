@@ -4,6 +4,7 @@ import * as userData from "../data/users.js";
 import { ObjectId } from "mongodb";
 
 export const addSurvey = async (
+  surveyCreated,
   surveyName,
   startDate,
   endDate,
@@ -63,6 +64,7 @@ export const addSurvey = async (
 
   const surveyCollection = await survey();
   const surveyData = {
+    surveyCreated,
     surveyName,
     startDate,
     endDate,
@@ -92,7 +94,7 @@ export const addSurvey = async (
       }
     );
     if (!updatedUserInfo) {
-      throw "could not update team successfully because it doesnot exists anymore.";
+      throw "could not update survey successfully because it does not exists anymore.";
     }
   });
 
@@ -110,3 +112,25 @@ export const getSurveyById = async (id) => {
   curSurvey._id = curSurvey._id.toString();
   return curSurvey;
 };
+
+export const getSurveyList = async(userId) => {
+  const surveyCollection = await survey();
+  const curList = await surveyCollection.find({ 'surveyCreated': userId }).toArray();
+  return curList;
+}
+
+export const removeSurvey = async(id) => {
+  const surveyCollection = await survey();
+  const surveydeletionInfo = await surveyCollection.findOneAndDelete({
+    _id: ObjectId.createFromHexString(id),
+  });
+
+  if (!surveydeletionInfo) {
+    throw `Could not delete survey with id of ${id}, as it doesnot exists.`;
+  }
+  return { _id: ObjectId.createFromHexString(id) };
+}
+
+export const updateSurvey = async(id) => {
+
+}
