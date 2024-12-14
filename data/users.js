@@ -59,7 +59,7 @@ export const signUpUser = async (
     });
 
     if (user) {
-      throw "UserId already exist!";
+      throw "Email already exist!";
     }
   } catch (e) {
     errors.push(e);
