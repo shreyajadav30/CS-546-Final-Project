@@ -18,7 +18,7 @@ router
       const users = await usersDataFunctions.getAllUsers();
       // console.log(users);
       const user = await usersDataFunctions.getUserById(req.session.user._id);
-      res.status(200).render("userList", { users, user, searchTerm: "" });
+      res.status(200).render("userList", { title: "userList" ,users, user, searchTerm: "" });
       // res.render("userList", { users });
     } catch (error) {
       return res.status(500).render("error", {
@@ -282,7 +282,7 @@ router.route("/userProfile").get(async (req, res) => {
     const users = await usersDataFunctions.getAllUsers();
     // console.log(users);
     const user = await usersDataFunctions.getUserById(req.session.user._id);
-    res.render("userProfile", { users, user, searchTerm: "" });
+    res.render("userProfile", { title:"Profile", users, user, searchTerm: "" });
     // res.render("userList", { users });
   } catch (error) {
     return res.status(500).render("error", {
