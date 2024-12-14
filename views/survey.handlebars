@@ -20,6 +20,9 @@
     <form id="survey-form" method="POST" action="/survey">
       <h2>{{title}}</h2>
       <div>
+            <input type="hidden" id="surveyCreated" name="surveyCreated" value="{{surveyCreated}}">
+      </div>
+      <div>
         <label for="surveyName">Survey Name:</label>
         <input
           type="text"

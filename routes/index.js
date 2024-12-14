@@ -20,6 +20,7 @@ const constructorMethod = (app) => {
   app.use("/users", isUserLoggedIn, usersRoutes);
   app.use("/questions", isUserLoggedIn, questionsRoutes);
   app.use("/dashboard", isUserLoggedIn, dashboardRoutes);
+  app.use("/", isUserLoggedIn, surveyRoutes);
 
   app.use("*", (req, res, next) => {
     return res.status(404).render("error", {
