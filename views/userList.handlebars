@@ -13,7 +13,7 @@
 
     </ul>
   </div>
-  <div class="formDiv">
+  {{!-- <div class="formDiv"> --}}
 <form action="/users" method="POST" name="userList" id="userList">
   <label class="label" for="searchTerm">Search :</label>
   <input
@@ -44,15 +44,15 @@
     <tbody>
       {{#each users}}
         <tr>
-          <td id="firstName">{{this.firstName}}</td>
-          <td id="lastName">{{this.lastName}}</td>
-          <td id="email">{{this.email}}</td>
-          <td id="userId">{{this.userId}}</td>
-          <td id="role">{{this.role}}</td>
+          <td id="firstName_{{this._id}}">{{this.firstName}}</td>
+          <td id="lastName_{{this._id}}">{{this.lastName}}</td>
+          <td id="email_{{this._id}}">{{this.email}}</td>
+          <td id="userId_{{this._id}}">{{this.userId}}</td>
+          <td id="role_{{this._id}}">{{this.role}}</td>
           <td>
             <form action="/users/delete/{{this._id}}" method="post">
-              <a href="/users/addUser/{{this._id}}" class="button" id="editButton">Edit</a>
-              <button type="submit" class="button" id="deleteButton">
+              <a href="/users/addUser/{{this._id}}" class="button" id="editButton_{{this._id}}">Edit</a>
+              <button type="submit" class="button" id="deleteButton_{{this._id}}">
                 Delete
               </button>
             </form>
@@ -86,6 +86,7 @@
   {{/if}}
 </table>
     <a href="/users">Back to All users</a>
+    <script src="/js/users.js"></script>
   {{!-- {{else}}
 <div class="add-form">
   <form action="/users/" method="get">

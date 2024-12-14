@@ -23,24 +23,27 @@ const updateUser = document.getElementById("updateUser");
 
 if (userList) {
   userList.addEventListener("submit", (event) => {
-    event.preventDefault()
-console.log('......,,,,,......');
+    
+// console.log('......,,,,,......');
     let errors = [];
 
-    const firstName = document.getElementById("firstName");
-    let firstNameVal = firstName.value.trim();
+    const searchTerm = document.getElementById("searchTerm")
+    let searchTermVal = searchTerm.value.trim()
 
-    const lastName = document.getElementById("lastName");
-    let lastNameVal = lastName.value.trim();
+    // const firstName = document.getElementById("firstName");
+    // let firstNameVal = firstName.value.trim();
 
-    const userId = document.getElementById("userId");
-    let userIdVal = userId.value.trim();
+    // const lastName = document.getElementById("lastName");
+    // let lastNameVal = lastName.value.trim();
 
-    const email = document.getElementById("email");
-    let emailVal = email.value.trim();
+    // const userId = document.getElementById("userId");
+    // let userIdVal = userId.value.trim();
 
-    const role = document.getElementById("role");
-    let roleVal = role.value.trim();
+    // const email = document.getElementById("email");
+    // let emailVal = email.value.trim();
+
+    // const role = document.getElementById("role");
+    // let roleVal = role.value.trim();
 
     //   const editButton = document.getElementById("editButton");
     //   const deleteButton = document.getElementById("deleteButton");
@@ -51,65 +54,62 @@ console.log('......,,,,,......');
     errorDivUl.innerHTML = "";
 
     try {
-      firstNameVal = checkString(firstNameVal, "firstName");
-      let hasNumber = isContainsNumber(firstNameVal);
+        searchTermVal = checkString(searchTermVal, "searchTerm");
+      let hasNumber = isContainsNumber(searchTermVal);
       if (hasNumber) {
         throw "It is not allowed to have number in firstname!!";
       }
-      if (firstNameVal.length < 2 || firstNameVal.length > 25) {
-        throw "firstname should be at least 2 characters long with a max of 25 characters!!";
-      }
     } catch (e) {
       errors.push(e);
     }
 
-    try {
-      lastNameVal = checkString(lastNameVal, "lastName");
-      let hasNumber = isContainsNumber(lastNameVal);
-      if (hasNumber) {
-        throw "It is not allowed to have number in lastName!!";
-      }
-      if (lastNameVal.length < 2 || lastNameVal.length > 25) {
-        throw "lastName should be at least 2 characters long with a max of 25 characters!!";
-      }
-    } catch (e) {
-      errors.push(e);
-    }
+    // try {
+    //   lastNameVal = checkString(lastNameVal, "lastName");
+    //   let hasNumber = isContainsNumber(lastNameVal);
+    //   if (hasNumber) {
+    //     throw "It is not allowed to have number in lastName!!";
+    //   }
+    //   if (lastNameVal.length < 2 || lastNameVal.length > 25) {
+    //     throw "lastName should be at least 2 characters long with a max of 25 characters!!";
+    //   }
+    // } catch (e) {
+    //   errors.push(e);
+    // }
 
-    try {
-      userIdVal = checkString(userIdVal, "userId");
-      let hasNumber = isContainsNumber(userIdVal);
-      if (hasNumber) {
-        throw "It is not allowed to have number in userId!!";
-      }
-      if (userIdVal.length < 5 || userIdVal.length > 10) {
-        throw "userId should be at least 5 characters long with a max of 10 characters!!";
-      }
-    } catch (e) {
-      errors.push(e);
-    }
+    // try {
+    //   userIdVal = checkString(userIdVal, "userId");
+    //   let hasNumber = isContainsNumber(userIdVal);
+    //   if (hasNumber) {
+    //     throw "It is not allowed to have number in userId!!";
+    //   }
+    //   if (userIdVal.length < 5 || userIdVal.length > 10) {
+    //     throw "userId should be at least 5 characters long with a max of 10 characters!!";
+    //   }
+    // } catch (e) {
+    //   errors.push(e);
+    // }
 
-    try {
-      emailVal = checkString(emailVal, "email");
-      if (!isValidEmail(emailVal)) {
-        throw "Invalid email!!";
-      }
-    } catch (e) {
-      errors.push(e);
-    }
+    // try {
+    //   emailVal = checkString(emailVal, "email");
+    //   if (!isValidEmail(emailVal)) {
+    //     throw "Invalid email!!";
+    //   }
+    // } catch (e) {
+    //   errors.push(e);
+    // }
 
-    try {
-      roleVal = checkString(roleVal, "role");
-      roleVal = roleVal.toLowerCase();
-      if (roleVal !== "admin" && roleVal !== "user") {
-        throw `Only valid roles are admin and user! ${roleVal} can not be role!!`;
-      }
-    } catch (e) {
-      errors.push(e);
-    }
+    // try {
+    //   roleVal = checkString(roleVal, "role");
+    //   roleVal = roleVal.toLowerCase();
+    //   if (roleVal !== "admin" && roleVal !== "user") {
+    //     throw `Only valid roles are admin and user! ${roleVal} can not be role!!`;
+    //   }
+    // } catch (e) {
+    //   errors.push(e);
+    // }
 
     if (errors.length > 0) {
-        console.log('jjjjj');
+        // console.log('jjjjj');
       console.log("Form submission fired");
       event.preventDefault();
       console.log("Has a form");
