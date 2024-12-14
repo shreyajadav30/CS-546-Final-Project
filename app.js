@@ -4,7 +4,7 @@ import cookieParser from "cookie-parser";
 import exphbs from "express-handlebars";
 import path from "path";
 import { fileURLToPath } from "url";
-
+import fileUpload from "express-fileupload";
 import session from "express-session";
 
 import configRoutesFunction from "./routes/index.js";
@@ -72,6 +72,13 @@ app.engine(
 );
 
 app.set("view engine", "handlebars");
+
+app.use(
+  fileUpload({
+    limits: { fileSize: 5 * 1024 * 1024 },
+    abortOnLimit: true,
+  })
+);
 
 configRoutesFunction(app);
 

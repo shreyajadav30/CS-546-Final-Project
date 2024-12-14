@@ -225,6 +225,28 @@ export const getUserById = async (id) => {
   userbyid._id = userbyid._id.toString();
   return userbyid;
 };
+export const getUserByUserId = async (userId) => {
+  const usersCollection = await users();
+  let errors = [];
+  try {
+    userId = checkString(userId, "id");
+  } catch (e) {
+    errors.push(e);
+  }
+  if (errors.length > 0) {
+    // console.log('errrrrrr', errors);
+    return {
+      hasError: true,
+      errors,
+    };
+  }
+  // validateInputsId(id);
+
+  const userbyid = await usersCollection.findOne({ userId: userId });
+  if (userbyid === null) throw "No user with that id.";
+  userbyid._id = userbyid._id.toString();
+  return userbyid;
+};
 export const getAllUserWithProvidedIds = async (ids) => {
   if (!ids) {
     return [];
