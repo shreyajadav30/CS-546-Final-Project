@@ -55,7 +55,7 @@ export const signUpUser = async (
       throw "Invalid email!!";
     }
     const user = await usersCollection.findOne({
-      email: { $regex: new RegExp(email, "i") },
+      userId: { $regex: new RegExp(userId, "i") },
     });
 
     if (user) {
