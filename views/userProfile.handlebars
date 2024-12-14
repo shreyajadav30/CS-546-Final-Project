@@ -14,7 +14,7 @@
   </div>
   <div class="formDiv">
 <div class="add-form">
-  <form action="/users/userProfile/" method="post" id="updateUser">
+  <form action="/users/userProfile" method="get" id="userProfile">
     <input type="hidden" name="_id" value="{{user._id}}" />
     <div class="form">
       <label>First Name</label>
@@ -53,9 +53,9 @@
       <label>User Id</label>
       <input
         class="form-control"
-        id="userId"
-        name="userId"
-        placeholder="userId"
+        id="username"
+        name="username"
+        placeholder="username"
         required
         value="{{user.userId}}"
       />
@@ -71,11 +71,6 @@
         value="{{user.role}}"
       />
     </div>
-    <div>
-      {{!-- <a href="/users/" class="button">☰ View All</a> --}}
-      <button type="submit" class="button">
-        Submit
-      </button>
-    </div>
+  <a href="/users/userProfile/{{user._id}}" class="button">Edit</a>
   </form>
 </div>

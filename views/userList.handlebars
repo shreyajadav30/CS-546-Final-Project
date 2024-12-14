@@ -1,10 +1,25 @@
-{{#if (isEqual session.user.role "admin")}}
-<form action="/users" method="POST">
+{{!-- {{#if (isEqual session.user.role "admin")}} --}}
+{{#if hasErrors}}
+    <div id="serverErrorDiv">
+      <ul class="error">
+        {{#each errors}}
+          <li>{{this}}</li>
+        {{/each}}
+      </ul>
+    </div>
+  {{/if}}
+  <div id="errorDiv" hidden>
+    <ul id="errorDivUl" class="error">
+
+    </ul>
+  </div>
+  <div class="formDiv">
+<form action="/users" method="POST" name="userList" id="userList">
   <label class="label" for="searchTerm">Search :</label>
   <input
     class="inputText"
     type="text"
-    id="search"
+    id="searchTerm"
     name="searchTerm"
     value="{{searchTerm}}"
   />
@@ -29,15 +44,15 @@
     <tbody>
       {{#each users}}
         <tr>
-          <td>{{this.firstName}}</td>
-          <td>{{this.lastName}}</td>
-          <td>{{this.email}}</td>
-          <td>{{this.userId}}</td>
-          <td>{{this.role}}</td>
+          <td id="firstName">{{this.firstName}}</td>
+          <td id="lastName">{{this.lastName}}</td>
+          <td id="email">{{this.email}}</td>
+          <td id="userId">{{this.userId}}</td>
+          <td id="role">{{this.role}}</td>
           <td>
             <form action="/users/delete/{{this._id}}" method="post">
-              <a href="/users/addUser/{{this._id}}" class="button">Edit</a>
-              <button type="submit" class="button">
+              <a href="/users/addUser/{{this._id}}" class="button" id="editButton">Edit</a>
+              <button type="submit" class="button" id="deleteButton">
                 Delete
               </button>
             </form>
@@ -71,7 +86,7 @@
   {{/if}}
 </table>
     <a href="/users">Back to All users</a>
-  {{else}}
+  {{!-- {{else}}
 <div class="add-form">
   <form action="/users/" method="get">
     <input type="hidden" name="_id" value="{{user._id}}" />
@@ -133,4 +148,4 @@
   <a href="/users/addUser/{{user._id}}" class="button">Edit</a>
   </form>
 </div>
-{{/if}}
+{{/if}} --}}
