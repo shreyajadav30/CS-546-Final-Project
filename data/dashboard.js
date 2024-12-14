@@ -114,3 +114,19 @@ export const surveyResponse = async (
     throw "Could not add answer to a database!!";
   return { answerAdded: true };
 };
+
+export const getSurveyAnswer = async (surveyId, surveyedBy, surveyingForId) => {
+  //   objectIds = objectIds.map((id) => ObjectId.createFromHexString(id));
+  const answerCollection = await surveyAnswer();
+  const answer = await answerCollection.findOne({
+    surveyId: surveyId,
+    surveydBy: surveyedBy,
+    surveyingFor: surveyingForId,
+  });
+
+  if (!answer) {
+    throw "No answer found";
+  }
+
+  return answer;
+};

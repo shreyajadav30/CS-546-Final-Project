@@ -2,7 +2,10 @@ import { Router } from "express";
 import { dashboardDataFunctions, usersDataFunctions } from "../data/index.js";
 import { getSurveyById } from "../data/survey.js";
 import { getAllUserWithProvidedIds } from "../data/users.js";
-import { getAllQuestionsWithGivenIds } from "../data/dashboard.js";
+import {
+  getAllQuestionsWithGivenIds,
+  getSurveyAnswer,
+} from "../data/dashboard.js";
 import {
   checkId,
   checkString,
@@ -243,6 +246,66 @@ router
         message: "Internal Server Error",
         link: "/dashboard",
         linkName: "Dashboard",
+      });
+    }
+  });
+
+router
+  .route("/filledSurveyPreview/:surveyId/:surveyingForId/")
+  .get(async (req, res) => {
+    try {
+      req.params.surveyId = checkId(req.params.surveyId);
+      req.params.surveyingForId = checkId(req.params.surveyingForId);
+
+      const surveyAnswer = await getSurveyAnswer(
+        req.params.surveyId,
+        req.session.user._id,
+        req.params.surveyingForId
+      );
+      if (!surveyAnswer) {
+        // error
+      }
+      let questionAnswerObject = {};
+
+      await Promise.all(
+        Object.keys(surveyAnswer.answers).map(async (queId) => {
+          let que = await getQuestionById(queId);
+
+          if (Object.keys(questionAnswerObject).includes(que.categoryName)) {
+            questionAnswerObject[que.categoryName].push({
+              ...que,
+              answer: surveyAnswer.answers[queId],
+            });
+          } else {
+            questionAnswerObject[que.categoryName] = [
+              {
+                ...que,
+                answer: surveyAnswer.answers[queId],
+              },
+            ];
+          }
+        })
+      );
+
+      // console.log(questionAnswerObject);
+
+      res.status(200).render("filledSurveyPreview", {
+        title: "Filled Survey Preview",
+        questions: Object.entries(questionAnswerObject).map(([key, value]) => ({
+          key,
+          value,
+        })),
+        surveyId: req.params.surveyId,
+        surveyingForId: req.params.surveyingForId,
+      });
+    } catch (e) {
+      console.log(e);
+
+      return res.status(404).render("error", {
+        title: "Not Found",
+        message: "404: Survey with that Id Not Found",
+        link: "/",
+        linkName: "Home",
       });
     }
   });
