@@ -93,7 +93,8 @@ input[type="submit"]:hover {
   margin-bottom: 2rem;
 }
 
-.add-btn {
+.add-btn,
+input[type="file"] {
   background-color: #4caf50;
   color: white;
   padding: 0.5rem 1rem;
@@ -257,4 +258,12 @@ input[type="submit"]:hover {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+#excel_upload,
+#dropdown-container {
+  display: none;
+}
+#selectionRadio,
+#excel_upload {
+  margin-bottom: 12px;
 }
