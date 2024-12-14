@@ -1,0 +1,17 @@
+<div class="filled_sruevy_Container">
+  {{#each questions}}
+    <h1>{{this.key}}</h1>
+    {{#each this.value}}
+      <div class="surveyFilledContainer">
+        <div class="question-item-filled">
+          <p class="question-label-filled">Question:</p>
+          <p class="question-value">{{this.questionText}}</p>
+        </div>
+        <div class="question-item-filled">
+          <p class="question-label-filled">Answer:</p>
+          <p class="question-value">{{this.answer}}</p>
+        </div>
+      </div>
+    {{/each}}
+  {{/each}}
+</div>

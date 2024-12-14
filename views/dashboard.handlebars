@@ -28,10 +28,10 @@
           <li>
             {{this.firstName}}
             {{this.lastName}}
-            {{!-- <a
+            <a
             target="_blank"
-              href="/dashboard/fillSurvey/{{../this.surveyDetailsData._id}}/{{this._id}}"
-            >fill now</a> --}}
+              href="/dashboard/filledSurveyPreview/{{../this.surveyDetailsData._id}}/{{this._id}}"
+            >View Survey</a>
           </li>
         {{/each}}
       </ul>
