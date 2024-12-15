@@ -2,6 +2,8 @@
 import { users } from "../config/mongoCollections.js";
 // import { validateInputsTeams, validateInputsId } from "../helpers.js";
 import { ObjectId } from "mongodb";
+import crypto from "crypto";
+import bcrypt from "bcryptjs";
 import {
   checkId,
   checkString,
@@ -438,4 +440,66 @@ export const searchUser = async (name) => {
   if (userName.length ===0) throw "No user with that name found.";
   // console.log('user',userName);
   return userName;
+};
+
+export const getUserByEmail = async (email) => {
+    const userCollection = await users();
+    const user = await userCollection.findOne({ email });
+    if (!user) throw new Error("User not found");
+    return user;
+};
+
+export const setResetToken = async (userId) => {
+    const userCollection = await users();
+    const resetToken = crypto.randomBytes(32).toString("hex");
+    const hashedToken = crypto.createHash("sha256").update(resetToken).digest("hex");
+    const resetExpiry = new Date(Date.now() + 15 * 60 * 1000);
+    const updateResult = await userCollection.updateOne(
+        { _id: userId },
+        {
+            $set: {
+                resetPasswordToken: hashedToken,
+                resetPasswordExpires: resetExpiry,
+            },
+        }
+    );
+    if (!updateResult.modifiedCount) throw new Error("Failed to set reset token");
+    return { resetToken, resetExpiry };
+};
+
+export const validateResetToken = async (id, token) => {
+    const userCollection = await users();
+    const user = await userCollection.findOne({ _id: new ObjectId(id) });
+    if (!user || !user.resetPasswordToken || !user.resetPasswordExpires)
+        throw new Error("Invalid or expired token");
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+    if (
+        hashedToken !== user.resetPasswordToken ||
+        new Date() > new Date(user.resetPasswordExpires)
+    ) {
+        throw new Error("Token is invalid or expired");
+    }
+    return user;
+};
+
+export const updatePassword = async (id, newPassword) => {
+    id = checkId(id, "User Id");
+    newPassword = checkString(newPassword, "Password");
+    newPassword = isValidPassword(newPassword);
+    const userCollection = await users();
+    const hashedPassword = await generateHashPassword(newPassword);;
+    const updateResult = await userCollection.updateOne(
+        { _id: new ObjectId(id) },
+        {
+            $set: {
+                password: hashedPassword,
+                resetPasswordToken: null,
+                resetPasswordExpires: null,
+            },
+        }
+    );
+
+    if (!updateResult.modifiedCount) {
+        throw new Error("Failed to update password");
+    }
 };
