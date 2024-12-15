@@ -25,21 +25,12 @@ const router = Router();
 
 const getSurveyDetails = async (surveysArr) => {
   let arrAns = [];
-  if (surveysArr && surveysArr.length > 0) {
+  if (surveysArr.length > 0) {
     arrAns = await Promise.all(
       surveysArr.map(async (surveyData) => {
         let obj = {};
         let curSurvey = await getSurveyById(surveyData.surveyId.toString());
         obj["surveyDetailsData"] = curSurvey;
-
-        
-//         if(curSurvey === null){
-//           return null;
-//         }
-//         let answer = await getAllUserWithProvidedIds(surveyData.surveyingFor);
-        
-//         obj["surveyingForData"] = answer;
-
 
         let pendingSurvey = await getAllUserWithProvidedIds(
           surveyData.surveyingFor
@@ -55,7 +46,6 @@ const getSurveyDetails = async (surveysArr) => {
         obj["surveyingForData"] = pendingSurvey;
         obj["isAnySurveyPending"] = pendingSurvey.length !== 0;
         obj["isAnySurveyCompleted"] = obj["completedSurvey"].length !== 0;
-
         // console.log(obj);
         return obj;
       })
@@ -66,16 +56,8 @@ const getSurveyDetails = async (surveysArr) => {
 };
 const getSurveyQuestionsDetails = async (id) => {
   let survey = await getSurveyById(id);
-  console.log(survey);
-  
-  if (!survey) {
-    throw new Error("No Survey with that id.");
-  }
-
   let arrAns = [];
-  console.log(survey.selectedQuestions);
-  
-  if (survey.selectedQuestions && Object.keys(survey.selectedQuestions).length > 0) {
+  if (Object.keys(survey.selectedQuestions).length > 0) {
     arrAns = await Promise.all(
       Object.keys(survey.selectedQuestions).map(async (category) => {
         let obj = {};
@@ -96,29 +78,14 @@ const getSurveyQuestionsDetails = async (id) => {
 
 router.route("/").get(async (req, res) => {
   const user = await usersDataFunctions.getUserById(req.session.user._id);
-  try{
-    if (!user) {
-      return res.status(404).render("error", {
-        title: "Not Found",
-        message: "404: Not Found",
-        link: "/",
-        linkName: "Home",
-      });
-    }
-    console.log(user.surveys);
-    let surveyDetails = await getSurveyDetails(user.surveys);
-    console.log(surveyDetails);
-
-//     if(surveyDetails === null){
-      
-//     }
-    
-//     res.status(200).render("dashboard", { title: "Dashboard", surveyDetails });
-//   }catch(e){
-//     console.log(e);
-//     return res.status(404).json({ error: "404:No survey with that id"});
-//   }
-  
+  if (!user) {
+    return res.status(404).render("error", {
+      title: "Not Found",
+      message: "404: Not Found",
+      link: "/",
+      linkName: "Home",
+    });
+  }
 
   let surveyDetails = await getSurveyDetails(user.surveys);
 
@@ -127,7 +94,6 @@ router.route("/").get(async (req, res) => {
     curUser: user,
     surveyDetails,
   });
-
 });
 
 router

@@ -25,7 +25,6 @@
       </ul>
     </div>
   {{/if}}
-
   <div id="survey-container">
     <form
       id="survey-form"
@@ -97,7 +96,6 @@
         />
         Add UserMapping Manually
       </div>
-
       {{!-- <div>
         <label for="surveyedFor">Survey For:</label>
         <select id="surveyedFor" name="surveyedFor">
@@ -125,7 +123,6 @@
       </div>
       <div id="dropdown-container">
         {{! <label for="addSurveyFor">User Mapping:</label> }}
-
         <button type="button" id="addSurveyFor" class="add-btn">+ Add Survey For</button>
 
         <div id="selectedSurveyForUser" class="accordion-container">
@@ -151,95 +148,6 @@
       </ul>
     </div>
 
-  </div>
-</main>
-<script src="/public/js/survey.js"></script> --}}
-
-<main>
-  <div id="survey-container">
-    <form id="survey-form" method="POST"  action="{{#if isEditMode}}/surveylist/edit/{{surveyCreated._id}}{{else}}/survey{{/if}}">
-      <h2>{{title}}</h2>
-      <div>
-        <input type="hidden" id="surveyCreated" name="surveyCreated" value="{{surveyCreated}}" />
-      </div>
-      <div>
-        <label for="surveyName">Survey Name:</label>
-        <input
-          type="text"
-          id="surveyName"
-          name="surveyName"
-          value="{{surveyCreated.surveyName}}"
-          placeholder="Enter survey name"
-          required
-        />
-      </div>
-
-      <div>
-        <label for="startDate">Start Date:</label>
-        <input
-          type="date"
-          id="startDate"
-          name="startDate"
-          value="{{surveyCreated.startDate}}"
-          required
-        />
-      </div>
-
-      <div>
-        <label for="endDate">End Date:</label>
-        <input
-          type="date"
-          id="endDate"
-          name="endDate"
-          value="{{surveyCreated.endDate}}"
-          required
-        />
-      </div>
-
-      <div>
-        <label for="questionnaire">Questions:</label>
-        <input type="hidden" name="selectedQuestions" id="selectedQuestions" value="{{surveyCreated.selectedQuestions}}" />
-        <div id="selectedQuestionDevTag">
-          {{!-- {{#each surveyCreated.selectedQuestions}}
-            <div>{{this}}</div>
-          {{/each}} --}}
-        </div>
-        <button id="questionnaire" class="add-btn">+ Add Question</button>
-      </div>
-
-      <div>
-        <label for="status">Status:</label>
-        <select id="status" name="status">
-          <option value="active" {{#if (isEqual survey.status "active")}}selected{{/if}}>Active</option>
-          <option value="inactive" {{#if (isEqual survey.status "inactive")}}selected{{/if}}>Inactive</option>
-        </select>
-      </div>
-
-      <div id="dropdown-container">
-        <label for="addSurveyFor">User Mapping:</label>
-        <button type="button" id="addSurveyFor" class="add-btn">+ Add Survey For</button>
-
-        <div id="selectedSurveyForUser" class="accordion-container">
-          {{!-- {{#each surveyCreated.userMapping}}
-            <div>{{this.surveyedFor}}</div>
-          {{/each}} --}}
-        </div>
-
-        <input type="hidden" name="userMappingData" id="userMappingData" value="{{surveyCreated.userMappingData}}" />
-      </div>
-      <input type="submit" id="submitBtn" name="submitBtn" value="{{#if isEditMode}}Update Survey{{else}}Create Survey{{/if}}" />
-    </form>
-    <div id="userDropDown" class="search-dropdown" style="display: none;">
-      <div class="search-box">
-        <input
-          type="text"
-          id="search-input"
-          class="search-input"
-          placeholder="Search..."
-        />
-      </div>
-      <ul class="dropdown-list" id="dropdown-list"></ul>
-    </div>
   </div>
 </main>
 <script src="/public/js/survey.js"></script>
