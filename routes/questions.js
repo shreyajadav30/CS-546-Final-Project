@@ -3,8 +3,10 @@ import createHttpError from 'http-errors';
 import { ObjectId } from 'mongodb';
 import { questionsDataFunctions, surveyDataFunctions } from '../data/index.js';
 import { validationMethods } from '../utils/helpers/validations.js';
+import { isAdminLoggedIn } from '../utils/middlewares/authMiddlewares.js';
 
 const router = Router();
+router.use(isAdminLoggedIn);
 
 const questionTypes = [
 	{ name: 'Text', type: 'text' },
