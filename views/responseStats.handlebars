@@ -1,0 +1,78 @@
+{{#if (isEqual session.user.role "admin")}}
+  <div>
+    <p class="title-states">
+      {{surveyAnswerByTotal}}
+      out of
+      {{surveySentToTotal}}
+      filled the survey!
+    </p>
+  </div>
+{{/if}}
+
+<div class="filled_sruevy_Container">
+  {{#each statsData}}
+    <h1>{{key}}</h1>
+    <div class="chartContainer surveyFilledContainer">
+      {{#each value}}
+        {{#if (isEqual this.type "rating")}}
+          <div class="question-item-filled">
+            <p class="question-label-filled">Question:</p>
+            <div class="question-value">{{this.questionText}}</div>
+            <p class="question-label-filled">Summary:</p>
+            <div class="chartCenterContainer">
+              <canvas
+                class="chartRating"
+                data-statsData-rating="{{this.answerStats}}"
+                data-rating-scale="{{this.scale}}"
+                data-rating-question-text="{{this.questionText}}"
+                id="{{this.questionId}}_myChartRating"
+              ></canvas>
+            </div>
+          </div>
+        {{/if}}
+        {{#if (isEqual this.type "single_select")}}
+          <div class="question-item-filled">
+            <p class="question-label-filled">Question:</p>
+            <div class="question-value">{{this.questionText}}</div>
+            <p class="question-label-filled">Summary:</p>
+            <div class="chartCenterContainer">
+              <canvas
+                class="chartSingleSelect"
+                data-statsData-single-select="{{this.answerStats}}"
+                data-single-question-text="{{this.questionText}}"
+                id="{{this.questionId}}_myChartsingleSelect"
+              ></canvas>
+            </div>
+          </div>
+        {{/if}}
+        {{#if (isEqual this.type "multi_select")}}
+          <div class="question-item-filled">
+            <p class="question-label-filled">Question:</p>
+            <div class="question-value">{{this.questionText}}</div>
+            <p class="question-label-filled">Summary:</p>
+            <div class="chartCenterContainer">
+              <canvas
+                class="chartMultiSelect"
+                data-statsData-multi-select="{{this.answerStats}}"
+                data-multi-question-text="{{this.questionText}}"
+                id="{{this.questionId}}_myChartMultiSelect"
+              ></canvas>
+            </div>
+          </div>
+        {{/if}}
+        {{#if (isEqual this.type "text")}}
+          <div class="question-item-filled">
+            <p class="question-label-filled">Question:</p>
+            <div class="question-value">{{this.questionText}}</div>
+            <p class="question-label-filled">Summary:</p>
+            {{#each this.answer}}
+              <p>{{this}}</p>
+            {{/each}}
+          </div>
+        {{/if}}
+      {{/each}}
+    </div>
+  {{/each}}
+
+</div>
+<script src="/public/js/surveyStats.js"></script>

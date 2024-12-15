@@ -1,0 +1,19 @@
+.chartRating,
+.chartSingleSelect,
+.chartMultiSelect {
+  max-height: 300px;
+  max-width: 300px;
+}
+
+.chartCenterContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.title-states {
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+}
