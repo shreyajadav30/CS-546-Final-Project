@@ -7,7 +7,7 @@
 <table class='table'>
 	<thead>
 		<tr>
-			<th>Question ID</th>
+			<th>Question</th>
 			<th>Category</th>
 			<th>Type</th>
 			{{! <th>Question use count</th> }}
@@ -24,7 +24,7 @@
 	<tbody>
 		{{#each questions}}
 			<tr>
-				<td>{{this.questionId}}</td>
+				<td>{{this.questionText}}</td>
 				<td>{{this.categoryName}}</td>
 				<td>{{this.type}}</td>
 				{{!-- <td>{{this.useCount}}</td> --}}
