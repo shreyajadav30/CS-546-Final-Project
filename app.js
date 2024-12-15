@@ -14,6 +14,14 @@ import {
   signOutUserMiddleWare,
 } from "./utils/middlewares/authMiddlewares.js";
 
+const rewriteUnsupportedBrowserMethods = (req, res, next) => {
+    if (req.body && req.body._method) {
+      req.method = req.body._method;
+      delete req.body._method;
+    }
+    next();
+  };
+
 dotenv.config();
 
 const PORT = process.env.PORT || 3000;
@@ -79,6 +87,7 @@ app.use(
     abortOnLimit: true,
   })
 );
+app.use(rewriteUnsupportedBrowserMethods);
 
 configRoutesFunction(app);
 

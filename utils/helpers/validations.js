@@ -67,6 +67,21 @@ const isValidObjectId = (id, paramName = 'ID') => {
 	return ObjectId.createFromHexString(id);
 };
 
+const isValidArrayOfStrings = (arr, paramName = 'Array') => {
+	isValidArray(arr, paramName);
+	const trimmedArray = arr.map((item, index) => {
+		try {
+			return isValidString(item, `${paramName} [Index ${index}]`);
+		} catch (error) {
+			throw new Error(
+				`${paramName} contains invalid value at index ${index}: ${error.message}`
+			);
+		}
+	});
+
+	return trimmedArray;
+};
+
 const validationMethods = {
 	isValidBoolean,
 	isValidString,
@@ -75,6 +90,7 @@ const validationMethods = {
 	isValidArray,
 	isValidObject,
 	isValidObjectId,
+	isValidArrayOfStrings,
 };
 
 const saltRounds = 16;

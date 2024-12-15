@@ -122,6 +122,14 @@ export const getSurveyList = async (userId) => {
   return curList;
 };
 
+export const getAllSurveys = async (userId) => {
+  const surveyCollection = await survey();
+  const surveys = await surveyCollection
+    .find({})
+    .toArray();
+  return surveys;
+};
+
 export const removeSurvey = async (id) => {
   const surveyCollection = await survey();
   const surveydeletionInfo = await surveyCollection.findOneAndDelete({
