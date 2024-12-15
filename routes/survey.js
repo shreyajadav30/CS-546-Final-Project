@@ -11,7 +11,7 @@ router.get("/", async (req, res) => {
   const surveyCreated = req.session.user._id;
   res
     .status(200)
-    .render("survey", { title: "Survey Form", userList: userList, surveyCreated : surveyCreated });
+    .render("survey", { title: "Survey Form", isEditMode: false, userList: userList, surveyCreated : surveyCreated });
 });
 
 // Add this Google Account
@@ -122,33 +122,5 @@ router.route("/getAllQuestion").get(async (req, res) => {
   }
 });
 
-router.route("/surveyList").get(async (req, res) => {
-try {
-  const userId = req.session.user._id;
-  const surveyCollection = await surveyData.getSurveyList(userId);
-  res
-  .status(200)
-  .render("surveyList", { title: "Survey List", surveyCollection});
-} catch (e) {
-  return res.status(500).json({ error: e.message });
-}
-});
 
-router.route("/delete/:id").post(async (req, res) => {
-  try {
-    await surveyData.removeSurvey(req.params.id);
-    res.redirect("/surveyList");
-  } catch (e) {
-    return res.status(404).render("error");
-  }
-});
-
-router.route("/edit/:id").post(async (req, res) => {
-  try {
-    const editSurvey = await surveyData.updateSurvey(req.params.id);
-    res.redirect("/surveyList");
-  } catch (e) {
-    return res.status(404).render("error");
-  }
-});
 export default router;

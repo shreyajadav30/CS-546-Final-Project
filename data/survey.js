@@ -32,7 +32,8 @@ export const addSurvey = async (
   status = helper.statusValid(status);
   //surveyedFor = helper.checkId(surveyedFor,"Survey For");
   //surveyedBy = helper.checkString(surveyedBy,"Survey By");
-
+  console.log(userMappingData);
+  
   let userMapping = [];
   let userServayingFor = {};
 
@@ -108,7 +109,10 @@ export const getSurveyById = async (id) => {
   const curSurvey = await surveyCollection.findOne({
     _id: ObjectId.createFromHexString(id),
   });
-  if (curSurvey === null) throw "No Survey with that id.";
+  if (!curSurvey) {
+    console.log(`No survey found with the ID: ${id}`);
+    return null; 
+  }
   curSurvey._id = curSurvey._id.toString();
   return curSurvey;
 };
@@ -116,21 +120,88 @@ export const getSurveyById = async (id) => {
 export const getSurveyList = async(userId) => {
   const surveyCollection = await survey();
   const curList = await surveyCollection.find({ 'surveyCreated': userId }).toArray();
+  console.log(curList);
+  
   return curList;
 }
 
 export const removeSurvey = async(id) => {
   const surveyCollection = await survey();
+  const userCollection = await users();
   const surveydeletionInfo = await surveyCollection.findOneAndDelete({
     _id: ObjectId.createFromHexString(id),
   });
 
   if (!surveydeletionInfo) {
-    throw `Could not delete survey with id of ${id}, as it doesnot exists.`;
+    throw `Could not delete survey with id of ${id}, as it does not exists.`;
   }
   return { _id: ObjectId.createFromHexString(id) };
 }
 
 export const updateSurvey = async(id) => {
+  const getSurvey = await getSurveyById(id);
+  
+  return getSurvey;
+  }
+
+export const replaceSurvey = async(id, surveyName, startDate, endDate, userMappingData, status, selectedQuestions) => {
+try {
+    const surveyCollection = await survey();
+
+    const oldSurvey = await getSurveyById(id); 
+    console.log(userMappingData);
+    const surveyCreated = oldSurvey.surveyCreated;
+    const surveyQuestionList = oldSurvey.surveyQuestionList;
+    let userMapping = [];
+    let userServayingFor = {};
+    
+    Object.keys(userMappingData).map((surveyedFor) => {
+      let surveyUsers = {};
+      surveyUsers["surveyedFor"] = surveyedFor;
+      surveyUsers["surveyedBy"] = userMappingData[surveyedFor];
+  
+      if (userMappingData[surveyedFor].length > 0) {
+        userMappingData[surveyedFor].map((respondant) => {
+          if (Object.keys(userServayingFor).includes(respondant)) {
+            userServayingFor[respondant].push(surveyedFor);
+          } else {
+            userServayingFor[respondant] = [surveyedFor];
+          }
+        });
+      }
+      
+      userMapping.push(surveyUsers);
+    });
+
+  
+    const updatedData = {
+      surveyCreated,
+      surveyName: surveyName,
+      startDate: startDate,
+      endDate: endDate,
+      surveyQuestionList,
+      status: status,
+      userMapping,
+      selectedQuestions: selectedQuestions, 
+    };
+    
+    const result = await surveyCollection.updateOne(
+      { _id: ObjectId.createFromHexString(id) }, 
+      { $set: updatedData } 
+    );
+
+
+    if (result.acknowledged === true) {
+      const updatedSurvey = await getSurveyById(id); 
+      console.log(updatedSurvey);
+      
+      return updatedSurvey;
+    } else {
+      throw new Error('Survey not updated');
+    }
+  } catch (error) {
+    console.error('Error updating survey:', error);
+    throw new Error('Failed to update survey');
+  }
 
 }
