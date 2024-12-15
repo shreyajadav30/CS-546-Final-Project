@@ -1,12 +1,18 @@
 <div>
   <h1>Your surveys!</h1>
   {{#each surveyDetails}}
+  {{#if (isEqual this.surveyDetailsData.status "active")}}
+  <h2>Active Surveys</h2>
   	{{#if (or this.isAnySurveyPending this.isAnySurveyCompleted)}}
     <div>
-      <h3>Survey Name: {{this.surveyDetailsData.surveyName}}</h3>
-      <a target="_blank" href="/dashboard/surveystats/{{this.surveyDetailsData._id}}/{{../curUser._id}}">
-        Survey Stats
-      </a>
+      <h3>Survey Name: {{this.surveyDetailsData.surveyName}}
+        <span>
+          <a target="_blank" href="/dashboard/surveystats/{{this.surveyDetailsData._id}}/{{../curUser._id}}">
+            Survey Stats
+          </a>
+        </span>
+      </h3>
+    
    {{#if this.isAnySurveyPending}}
       <ul>
         <h3>Your pending surveys!</h3>
@@ -39,6 +45,48 @@
       </ul>
       {{/if}}
     </div>
+      {{/if}}
+      {{/if}}
+   {{#if (isEqual this.surveyDetailsData.status "inactive")}}
+        <h2>Inactive Surveys</h2>
+      	{{#if (or this.isAnySurveyPending this.isAnySurveyCompleted)}}
+    <div>
+       <h3>Survey Name: {{this.surveyDetailsData.surveyName}}
+        <span>
+          <a target="_blank" href="/dashboard/surveystats/{{this.surveyDetailsData._id}}/{{../curUser._id}}">
+            Survey Stats
+          </a>
+        </span>
+      </h3> 
+   {{#if this.isAnySurveyPending}}
+      <ul>
+        <h3>Your pending surveys!</h3>
+        {{#each this.surveyingForData}}
+          <li>
+            {{this.firstName}}
+            {{this.lastName}}
+          </li>
+        {{/each}}
+      </ul>
+      {{/if}}
+        {{#if this.isAnySurveyCompleted}}
+      <ul>
+      
+        <h3>Completed survyes!</h3>
+        {{#each this.completedSurvey}}
+          <li>
+            {{this.firstName}}
+            {{this.lastName}}
+            <a
+            target="_blank"
+              href="/dashboard/filledSurveyPreview/{{../this.surveyDetailsData._id}}/{{this._id}}"
+            >View Survey</a>
+          </li>
+        {{/each}}
+      </ul>
+      {{/if}}
+    </div>
+      {{/if}}
       {{/if}}
   {{/each}}
 </div>

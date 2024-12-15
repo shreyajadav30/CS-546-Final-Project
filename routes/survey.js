@@ -256,4 +256,34 @@ router.route("/edit/:id").post(async (req, res) => {
     return res.status(404).render("error");
   }
 });
+
+router.route("/stats/:id").get(async (req, res) => {
+  try {
+    const surveyDataForGiveSurvey = await surveyData.getSurveyById(
+      req.params.id
+    );
+    if (!surveyDataForGiveSurvey) {
+      throw "No survey found!";
+    }
+
+    const userDataForGivenSurvey = await userData.getAllUserWithProvidedIds(
+      surveyDataForGiveSurvey.userMapping.map((xyz) => xyz["surveyedFor"])
+    );
+
+    return res.status(400).render("adminSurveyStats", {
+      title: "Admin Survey Stats",
+      allUserToWhomSurveySent: userDataForGivenSurvey,
+      surveyDataForGiveSurvey,
+    });
+  } catch (e) {
+    console.log(e);
+
+    return res.status(500).render("error", {
+      title: "Error",
+      message: "Internal Server Error",
+      link: "/dasboard",
+      linkName: "Dasboard",
+    });
+  }
+});
 export default router;

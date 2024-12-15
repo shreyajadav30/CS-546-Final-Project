@@ -137,45 +137,52 @@ router
       errors.push(e);
     }
 
-    const surveyQuestionDetails = await getSurveyQuestionsDetails(req.params.surveyId);
-    const allQuestions = surveyQuestionDetails.flatMap((category) => category.questions);
+    const surveyQuestionDetails = await getSurveyQuestionsDetails(
+      req.params.surveyId
+    );
+    const allQuestions = surveyQuestionDetails.flatMap(
+      (category) => category.questions
+    );
     allQuestions.forEach((question) => {
-        const questionId = question.questionId;
-        if (!(questionId in surveyAnswerData) || surveyAnswerData[questionId] === '') {
-            errors.push(`Response required for: "${question.questionText}"`);
-        } else {
-            try {
-                switch (question.type) {
-                  case "single_select":
-                    surveyAnswerData[questionId] = checkString(
-                      surveyAnswerData[questionId],
-                      question.questionText
-                    );
-                    break;
-                  case "multi_select":
-                    isValidArray(surveyAnswerData[questionId]);
-                    break;
-                  case "rating":
-                    surveyAnswerData[questionId] = ratingValidation(
-                      surveyAnswerData[questionId]
-                    );
-                    break;
-                  case "text":
-                    surveyAnswerData[questionId] = checkString(
-                      surveyAnswerData[questionId],
-                      question.questionText
-                    );
-                    break;
-                  default:
-                    if (!surveyAnswerData[questionId]) {
-                      throw `Not a valid answer for ${question.questionText}`;
-                    }
-                    break;
-                }
-              } catch (e) {
-                errors.push(e);
+      const questionId = question.questionId;
+      if (
+        !(questionId in surveyAnswerData) ||
+        surveyAnswerData[questionId] === ""
+      ) {
+        errors.push(`Response required for: "${question.questionText}"`);
+      } else {
+        try {
+          switch (question.type) {
+            case "single_select":
+              surveyAnswerData[questionId] = checkString(
+                surveyAnswerData[questionId],
+                question.questionText
+              );
+              break;
+            case "multi_select":
+              isValidArray(surveyAnswerData[questionId]);
+              break;
+            case "rating":
+              surveyAnswerData[questionId] = ratingValidation(
+                surveyAnswerData[questionId]
+              );
+              break;
+            case "text":
+              surveyAnswerData[questionId] = checkString(
+                surveyAnswerData[questionId],
+                question.questionText
+              );
+              break;
+            default:
+              if (!surveyAnswerData[questionId]) {
+                throw `Not a valid answer for ${question.questionText}`;
               }
+              break;
+          }
+        } catch (e) {
+          errors.push(e);
         }
+      }
     });
 
     // console.log(errors);
