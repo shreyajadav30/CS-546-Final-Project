@@ -90,6 +90,7 @@ export const addSurvey = async (
           surveys: {
             surveyId: insertedSurvey.insertedId,
             surveyingFor: userServayingFor[userMap],
+            responses: [],
           },
         },
       }
@@ -117,15 +118,21 @@ export const getSurveyById = async (id) => {
   return curSurvey;
 };
 
-export const getSurveyList = async(userId) => {
+export const getSurveyList = async (userId) => {
   const surveyCollection = await survey();
-  const curList = await surveyCollection.find({ 'surveyCreated': userId }).toArray();
-  console.log(curList);
-  
+  const curList = await surveyCollection
+    .find({ surveyCreated: userId })
+    .toArray();
   return curList;
-}
+};
 
-export const removeSurvey = async(id) => {
+export const getAllSurveys = async (userId) => {
+  const surveyCollection = await survey();
+  const surveys = await surveyCollection.find({}).toArray();
+  return surveys;
+};
+
+export const removeSurvey = async (id) => {
   const surveyCollection = await survey();
   const userCollection = await users();
   const surveydeletionInfo = await surveyCollection.findOneAndDelete({
@@ -136,7 +143,8 @@ export const removeSurvey = async(id) => {
     throw `Could not delete survey with id of ${id}, as it does not exists.`;
   }
   return { _id: ObjectId.createFromHexString(id) };
-}
+};
+
 
 export const updateSurvey = async(id) => {
   const getSurvey = await getSurveyById(id);
@@ -204,4 +212,33 @@ try {
     throw new Error('Failed to update survey');
   }
 
-}
+export const getAllSurveysWithProvidedIds = async (ids) => {
+  if (!ids) {
+    return [];
+  }
+  // validateInputsId(id);
+  const objectIds = ids.map((id) => ObjectId.createFromHexString(id));
+
+  const surveyCollection = await survey();
+  let errors = [];
+  // try {
+  //   ids = checkId(ids, "id");
+  // } catch (e) {
+  //   errors.push(e);
+  // }
+  // if (errors.length > 0) {
+  //   // console.log('errrrrrr', errors);
+  //   return {
+  //     hasError: true,
+  //     errors,
+  //   };
+  // }
+  let surveyById = await surveyCollection
+    .find({ _id: { $in: objectIds } })
+    .toArray();
+
+  if (!surveyById) throw "No survey with that id.";
+  // surveyById = surveyById.map((id) => id.toString());
+  return surveyById;
+};
+

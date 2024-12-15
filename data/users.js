@@ -2,7 +2,10 @@
 import { users } from "../config/mongoCollections.js";
 // import { validateInputsTeams, validateInputsId } from "../helpers.js";
 import { ObjectId } from "mongodb";
+import crypto from "crypto";
+import bcrypt from "bcryptjs";
 import {
+  checkId,
   checkString,
   isContainsNumber,
   isValidEmail,
@@ -203,19 +206,70 @@ export const getAllUsers = async () => {
 };
 
 export const getUserById = async (id) => {
+  const usersCollection = await users();
+  let errors = [];
+  try {
+    id = checkId(id, "id");
+  } catch (e) {
+    errors.push(e);
+  }
+  if (errors.length > 0) {
+    // console.log('errrrrrr', errors);
+    return {
+      hasError: true,
+      errors,
+    };
+  }
   // validateInputsId(id);
 
-  const usersCollection = await users();
   const userbyid = await usersCollection.findOne({ _id: new ObjectId(id) });
   if (userbyid === null) throw "No user with that id.";
   userbyid._id = userbyid._id.toString();
   return userbyid;
 };
+export const getUserByUserId = async (userId) => {
+  const usersCollection = await users();
+  let errors = [];
+  try {
+    userId = checkString(userId, "id");
+  } catch (e) {
+    errors.push(e);
+  }
+  if (errors.length > 0) {
+    // console.log('errrrrrr', errors);
+    return {
+      hasError: true,
+      errors,
+    };
+  }
+  // validateInputsId(id);
+
+  const userbyid = await usersCollection.findOne({ userId: userId });
+  if (userbyid === null) throw "No user with that id.";
+  userbyid._id = userbyid._id.toString();
+  return userbyid;
+};
 export const getAllUserWithProvidedIds = async (ids) => {
+  if (!ids) {
+    return [];
+  }
   // validateInputsId(id);
   const objectIds = ids.map((id) => ObjectId.createFromHexString(id));
 
   const usersCollection = await users();
+  let errors = [];
+  // try {
+  //   ids = checkId(ids, "id");
+  // } catch (e) {
+  //   errors.push(e);
+  // }
+  // if (errors.length > 0) {
+  //   // console.log('errrrrrr', errors);
+  //   return {
+  //     hasError: true,
+  //     errors,
+  //   };
+  // }
   let userbyid = await usersCollection
     .find({ _id: { $in: objectIds } })
     .toArray();
@@ -226,8 +280,21 @@ export const getAllUserWithProvidedIds = async (ids) => {
 };
 
 export const removeUser = async (id) => {
-  // validateInputsId(id);
   const usersCollection = await users();
+  let errors = [];
+  try {
+    id = checkId(id, "id");
+  } catch (e) {
+    errors.push(e);
+  }
+  if (errors.length > 0) {
+    // console.log('errrrrrr', errors);
+    return {
+      hasError: true,
+      errors,
+    };
+  }
+  // validateInputsId(id);
   const userdeletionInfo = await usersCollection.findOneAndDelete({
     _id: ObjectId.createFromHexString(id),
   });
@@ -246,9 +313,73 @@ export const updateUser = async (
   userId,
   role
 ) => {
-  // validateInputsId(id.trim());
-
   const usersCollection = await users();
+  let errors = [];
+  try {
+    _id = checkId(_id, "id");
+  } catch (e) {
+    errors.push(e);
+  }
+  try {
+    firstName = checkString(firstName, "firstName");
+    let hasNumber = isContainsNumber(firstName);
+    if (hasNumber) {
+      throw "It is not allowed to have number in firstname!!";
+    }
+    if (firstName.length < 2 || firstName.length > 25) {
+      throw "firstname should be at least 2 characters long with a max of 25 characters!!";
+    }
+  } catch (e) {
+    errors.push(e);
+  }
+  try {
+    lastName = checkString(lastName, "lastName");
+    let hasNumber = isContainsNumber(lastName);
+    if (hasNumber) {
+      throw "It is not allowed to have number in lastName!!";
+    }
+    if (lastName.length < 2 || lastName.length > 25) {
+      throw "lastName should be at least 2 characters long with a max of 25 characters!!";
+    }
+  } catch (e) {
+    errors.push(e);
+  }
+  try {
+    email = checkString(email, "email");
+    if (!isValidEmail(email)) {
+      throw "Invalid email!!";
+    }
+  } catch (e) {
+    errors.push(e);
+  }
+  try {
+    userId = checkString(userId, "userId");
+    let hasNumber = isContainsNumber(userId);
+    if (hasNumber) {
+      throw "It is not allowed to have number in userId!!";
+    }
+    if (userId.length < 5 || userId.length > 10) {
+      throw "userId should be at least 5 characters long with a max of 10 characters!!";
+    }
+  } catch (e) {
+    errors.push(e);
+  }
+  try {
+    role = checkString(role, "role");
+    role = role.toLowerCase();
+    if (role !== "admin" && role !== "user") {
+      throw `Only valid roles are admin and user! ${role} can not be role!!`;
+    }
+  } catch (e) {
+    errors.push(e);
+  }
+  if (errors.length > 0) {
+    // console.log('errrrrrr', errors);
+    return {
+      hasError: true,
+      errors,
+    };
+  }
 
   const updateUserData = {
     firstName: firstName.trim(),
@@ -257,22 +388,45 @@ export const updateUser = async (
     userId: userId.trim(),
     role: role.trim(),
   };
+  // console.log('111111', updateUserData);
 
   const updatedUserInfo = await usersCollection.updateOne(
     { _id: ObjectId.createFromHexString(_id) },
     { $set: updateUserData }
   );
 
+  // console.log('2222', updatedUserInfo);
+
   if (!updatedUserInfo) {
-    throw "could not update team successfully because it doesnot exists anymore.";
+    throw "could not update user successfully because it doesnot exists anymore.";
   }
   return updatedUserInfo;
 };
 
 export const searchUser = async (name) => {
-  // validateInputsId(id);
-  let userName = [];
   const usersCollection = await users();
+  let errors = [];
+  try {
+    name = checkString(name, "searchTerm");
+    let hasNumber = isContainsNumber(name);
+    if (hasNumber) {
+      throw "It is not allowed to have number in userId!!";
+    }
+  } catch (e) {
+    // console.log('123eeee',e);
+    errors.push(e);
+  }
+  if (errors.length > 0) {
+    // console.log('errrrrrr', errors);
+    return {
+      hasError: true,
+      errors,
+    };
+  }
+  // validateInputsId(id);
+  name = name.trim();
+  // console.log('name...',name);
+  let userName = [];
   // console.log('[[[[[[[');
   const query = {
     $or: [
@@ -283,6 +437,69 @@ export const searchUser = async (name) => {
   };
   userName = await usersCollection.find(query).limit(50).toArray();
   // console.log('query', userName);
-  if (userName === null) throw "No user with that name found.";
+  if (userName.length ===0) throw "No user with that name found.";
+  // console.log('user',userName);
   return userName;
+};
+
+export const getUserByEmail = async (email) => {
+    const userCollection = await users();
+    const user = await userCollection.findOne({ email });
+    if (!user) throw new Error("User not found");
+    return user;
+};
+
+export const setResetToken = async (userId) => {
+    const userCollection = await users();
+    const resetToken = crypto.randomBytes(32).toString("hex");
+    const hashedToken = crypto.createHash("sha256").update(resetToken).digest("hex");
+    const resetExpiry = new Date(Date.now() + 15 * 60 * 1000);
+    const updateResult = await userCollection.updateOne(
+        { _id: userId },
+        {
+            $set: {
+                resetPasswordToken: hashedToken,
+                resetPasswordExpires: resetExpiry,
+            },
+        }
+    );
+    if (!updateResult.modifiedCount) throw new Error("Failed to set reset token");
+    return { resetToken, resetExpiry };
+};
+
+export const validateResetToken = async (id, token) => {
+    const userCollection = await users();
+    const user = await userCollection.findOne({ _id: new ObjectId(id) });
+    if (!user || !user.resetPasswordToken || !user.resetPasswordExpires)
+        throw new Error("Invalid or expired token");
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+    if (
+        hashedToken !== user.resetPasswordToken ||
+        new Date() > new Date(user.resetPasswordExpires)
+    ) {
+        throw new Error("Token is invalid or expired");
+    }
+    return user;
+};
+
+export const updatePassword = async (id, newPassword) => {
+    id = checkId(id, "User Id");
+    newPassword = checkString(newPassword, "Password");
+    newPassword = isValidPassword(newPassword);
+    const userCollection = await users();
+    const hashedPassword = await generateHashPassword(newPassword);;
+    const updateResult = await userCollection.updateOne(
+        { _id: new ObjectId(id) },
+        {
+            $set: {
+                password: hashedPassword,
+                resetPasswordToken: null,
+                resetPasswordExpires: null,
+            },
+        }
+    );
+
+    if (!updateResult.modifiedCount) {
+        throw new Error("Failed to update password");
+    }
 };

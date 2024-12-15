@@ -1,24 +1,25 @@
 {{#if hasErrors}}
-    <div id="serverErrorDiv">
-      <ul class="error">
-        {{#each errors}}
-          <li>{{this}}</li>
-        {{/each}}
-      </ul>
-    </div>
-  {{/if}}
-  <div id="errorDiv" hidden>
-    <ul id="errorDivUl" class="error">
-
+  <div id="serverErrorDiv">
+    <ul class="error">
+      {{#each errors}}
+        <li>{{this}}</li>
+      {{/each}}
     </ul>
   </div>
-  {{!-- <div class="formDiv"> --}}
+{{/if}}
+<div id="errorDiv" hidden>
+  <ul id="errorDivUl" class="error">
+
+  </ul>
+</div>
+{{! <div class="formDiv"> }}
 <div class="add-form">
-  <form action="/users/userProfile/" method="post" id="updateUser">
+  <form action="/users/userProfile" method="get" id="userProfile">
     <input type="hidden" name="_id" value="{{user._id}}" />
     <div class="form">
       <label>First Name</label>
       <input
+        readonly
         id="firstName"
         class="form-control"
         name="firstName"
@@ -30,6 +31,7 @@
     <div class="form">
       <label>Last Name</label>
       <input
+        readonly
         class="form-control"
         id="lastName"
         name="lastName"
@@ -41,6 +43,7 @@
     <div class="form">
       <label>Email</label>
       <input
+        readonly
         id="email"
         name="email"
         class="form-control"
@@ -52,10 +55,11 @@
     <div class="form">
       <label>User Id</label>
       <input
+        readonly
         class="form-control"
-        id="userId"
-        name="userId"
-        placeholder="userId"
+        id="username"
+        name="username"
+        placeholder="username"
         required
         value="{{user.userId}}"
       />
@@ -63,6 +67,7 @@
     <div class="form">
       <label>Role</label>
       <input
+        readonly
         class="form-control"
         id="role"
         name="role"
@@ -71,12 +76,28 @@
         value="{{user.role}}"
       />
     </div>
-    <div>
-      {{!-- <a href="/users/" class="button">☰ View All</a> --}}
-      <button type="submit" class="button">
-        Submit
-      </button>
-    </div>
+    <a href="/users/userProfile/{{user._id}}" class="button">Edit</a>
+    {{#if isSurveyAvailableForThisUser}}
+    {{#each surveyData}}
+
+      <div>
+
+        <h3>{{this.surveyName}}
+          <span>
+            <a
+              target="_blank"
+              href="/dashboard/surveystats/{{this._id}}/{{../session.user._id}}"
+            >
+              Survey Stats
+            </a>
+          </span>
+        </h3>
+      </div>
+
+    {{/each}}
+    <h2>No Surveys for you!</h2>
+    {{/if}}
   </form>
+
 </div>
 <script src="/js/users.js"></script>

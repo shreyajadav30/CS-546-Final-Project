@@ -6,6 +6,7 @@
       <th>End Date</th>
       <th>Status</th>
       <th>Action</th>
+      <th>Survey Stats</th>
     </tr>
   </thead>
     <tbody>
@@ -22,6 +23,14 @@
               </button>
             </form>
             <a href="/surveylist/edit/{{this._id}}">Edit</a>
+          </td>
+          <td>
+            <a
+              target="_blank"
+              href="/dashboard/surveystats/{{this._id}}/{{../session.user._id}}"
+            >
+              Analysis
+            </a>
           </td>
         </tr>
       {{/each}}

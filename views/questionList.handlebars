@@ -1,10 +1,16 @@
+{{!-- {{#if message}}
+    <div id='popupNotification' class='popup'>
+        <p>{{message}}</p>
+        <button id='closePopup'>Close</button>
+    </div>
+{{/if}} --}}
 <table class='table'>
 	<thead>
 		<tr>
-			<th>Question ID</th>
+			<th>Question</th>
 			<th>Category</th>
 			<th>Type</th>
-			<th>Question use count</th>
+			{{! <th>Question use count</th> }}
 			<th>
 				<div class='add'>
 					<a
@@ -18,24 +24,22 @@
 	<tbody>
 		{{#each questions}}
 			<tr>
-				<td>{{this.questionId}}</td>
+				<td>{{this.questionText}}</td>
 				<td>{{this.categoryName}}</td>
 				<td>{{this.type}}</td>
-				<td>{{this.useCount}}</td>
+				{{!-- <td>{{this.useCount}}</td> --}}
 				<td>
-					Todo: Edit & Delete
-					{{!-- <form
-						action='/questions/delete/{{this.questionId}}'
-						method='post'
+					<form
+						action='/questions/question/{{this.questionId}}'
+						method='POST'
 					>
 						<a
-							href='/questions/addUser/{{this.questionId}}'
+							href='/questions/question/edit/{{this.questionId}}'
 							class='button'
 						>Edit</a>
-						<button type='submit' class='button'>
-							Delete
-						</button>
-					</form> --}}
+						<input type='hidden' name='_method' value='DELETE'>
+						<button type='submit' class='button'>Delete</button>
+					</form>
 				</td>
 			</tr>
 
