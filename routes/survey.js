@@ -67,16 +67,18 @@ router.post("/", async (req, res, next) => {
     errors.push(error);
   }
   try {
-    userMappingData = JSON.parse(userMappingData);
-    if (Object.keys(userMappingData).length <= 0) {
-      throw "Usermapping can not be empty!";
-    }
-
-    Object.keys(userMappingData).map((user) => {
-      if (userMappingData[user].length <= 0) {
-        throw "Survey by list can not be empty!!";
+    if (inputType === "manual") {
+      userMappingData = JSON.parse(userMappingData);
+      if (Object.keys(userMappingData).length <= 0) {
+        throw "Usermapping can not be empty!";
       }
-    });
+
+      Object.keys(userMappingData).map((user) => {
+        if (userMappingData[user].length <= 0) {
+          throw "Survey by list can not be empty!!";
+        }
+      });
+    }
   } catch (error) {
     errors.push(error);
   }
@@ -107,26 +109,26 @@ router.post("/", async (req, res, next) => {
   try {
     //surveyedFor = helper.checkId(surveyedFor,"Survey For");
     //surveyedBy = helper.checkId(surveyedBy,"Survey By");
+    if (inputType === "manual") {
+      Object.keys(userMappingData).map(async (user) => {
+        let currentuser = await userData.getUserById(user);
+        let userEmail = [];
 
-    Object.keys(userMappingData).map(async (user) => {
-      let currentuser = await userData.getUserById(user);
-      let userEmail = [];
-
-      userMappingData[user].forEach(async (val) => {
-        const userList = await userData.getUserById(val);
-        userEmail.push(userList.email);
-      });
-      const mailOptions = {
-        from: "SurveySync100@gmail.com",
-        to: userEmail,
-        subject: "Hello from surveySync!",
-        text: `
+        userMappingData[user].forEach(async (val) => {
+          const userList = await userData.getUserById(val);
+          userEmail.push(userList.email);
+        });
+        const mailOptions = {
+          from: "SurveySync100@gmail.com",
+          to: userEmail,
+          subject: "Hello from surveySync!",
+          text: `
             Hi,
 
             Hope you are doing well. You are selected as 
             respondant of ${surveyName}, and You are surveying for : ${
-          currentuser.firstName
-        } ${currentuser.lastName}
+            currentuser.firstName
+          } ${currentuser.lastName}
 
             click on below link to fill the survey:
             "http://localhost:3000/"
@@ -139,11 +141,12 @@ router.post("/", async (req, res, next) => {
             Best regards,
             The Survey Team
         `,
-      };
+        };
 
-      await transporter.sendMail(mailOptions);
-      console.log(`Email sent to ${userEmail}`);
-    });
+        await transporter.sendMail(mailOptions);
+        console.log(`Email sent to ${userEmail}`);
+      });
+    }
     // surveyedBy.forEach(async (val) => {
     //   const userList = await userData.getUserById(val);
     //   userEmail.push(userList.email);
@@ -202,11 +205,28 @@ router.post("/", async (req, res, next) => {
 
         for (let r = 2; r <= worksheet.rowCount; r++) {
           const row = worksheet.getRow(r);
-          const surveyFor = row.getCell(1).value?.toString().toLowerCase();
-          const surveyBy = row.getCell(2).value?.toString().toLowerCase();
-          console.log(`${surveyBy} is surveying for ${surveyFor}`);
+          const surveyFor = row
+            .getCell(1)
+            .value?.toString()
+            .toLowerCase()
+            .trim();
+          const surveyBy = row
+            .getCell(2)
+            .value?.toString()
+            .toLowerCase()
+            .trim();
 
           if (!surveyFor || !surveyBy) continue;
+
+          const issurveyFor = userList.some((obj) => obj.userId === surveyFor);
+          const issurveyBy = userList.some((obj) => obj.userId === surveyBy);
+
+          if (!issurveyBy) {
+            throw `user with userId ${surveyBy} not exist in the system.`;
+          }
+          if (!issurveyFor) {
+            throw `user with userId ${surveyFor} not exist in the system.`;
+          }
 
           if (!result[surveyFor]) {
             result[surveyFor] = [];
@@ -239,6 +259,43 @@ router.post("/", async (req, res, next) => {
             }
           })
         );
+
+        Object.keys(finalRes).map(async (user) => {
+          let currentuser = await userData.getUserById(user);
+          let userEmail = [];
+
+          finalRes[user].forEach(async (val) => {
+            const userList = await userData.getUserById(val);
+            userEmail.push(userList.email);
+          });
+          const mailOptions = {
+            from: "SurveySync100@gmail.com",
+            to: userEmail,
+            subject: "Hello from surveySync!",
+            text: `
+            Hi,
+
+            Hope you are doing well. You are selected as 
+            respondant of ${surveyName}, and You are surveying for : ${
+              currentuser.firstName
+            } ${currentuser.lastName}
+
+            click on below link to fill the survey:
+            "http://localhost:3000/"
+
+            Thank you for participating in survey. 
+            Your feedback is valuable!
+
+            Date: ${new Date().toLocaleDateString()}
+            
+            Best regards,
+            The Survey Team
+        `,
+          };
+
+          await transporter.sendMail(mailOptions);
+          console.log(`Email sent to ${userEmail}`);
+        });
 
         // console.log("excel data", finalRes);
       } catch (error) {
