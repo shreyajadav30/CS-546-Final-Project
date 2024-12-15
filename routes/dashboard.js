@@ -5,10 +5,15 @@ import { getAllUserWithProvidedIds } from "../data/users.js";
 import {
   getAllQuestionsWithGivenIds,
   getSurveyAnswer,
+  getSurveyAnswerStatistics,
+  getSurveyAnswerStatisticsForAdmin,
 } from "../data/dashboard.js";
 import {
+  calculateMutliChoiceStates,
+  calculateSingleChoiceCount,
   checkId,
   checkString,
+  findAverage,
   isValidArray,
   ratingValidation,
 } from "../utils/helpers/helpers.js";
@@ -84,7 +89,11 @@ router.route("/").get(async (req, res) => {
 
   let surveyDetails = await getSurveyDetails(user.surveys);
 
-  res.status(200).render("dashboard", { title: "Dashboard", surveyDetails });
+  res.status(200).render("dashboard", {
+    title: "Dashboard",
+    curUser: user,
+    surveyDetails,
+  });
 });
 
 router
@@ -306,5 +315,126 @@ router
       });
     }
   });
+
+router.route("/surveystats/:surveyId/:userId/").get(async (req, res) => {
+  try {
+    req.params.surveyId = checkId(req.params.surveyId);
+    req.params.userId = checkId(req.params.userId);
+
+    const surveyAnswer = await getSurveyAnswerStatistics(
+      req.params.surveyId,
+      req.params.userId
+    );
+
+    let curSurvey = await getSurveyById(req.params.surveyId);
+
+    if (!curSurvey) {
+      throw "No survey found!";
+    }
+
+    if (!surveyAnswer) {
+      throw "No survey answer found!";
+      // error
+    }
+
+    let surveySentToTotal = 0;
+
+    curSurvey.userMapping.map((usermap) => {
+      surveySentToTotal += usermap.surveyedBy.length;
+    });
+
+    const allSurveyWithSentId = await getSurveyAnswerStatisticsForAdmin(
+      req.params.surveyId
+    );
+
+    let surveyAnswerByTotal = allSurveyWithSentId.length;
+
+    let combinedSurveyAnswer = {};
+    surveyAnswer.map(async (answer) => {
+      Object.keys(answer.answers).map((queId) => {
+        if (Object.keys(combinedSurveyAnswer).includes(queId)) {
+          combinedSurveyAnswer[queId].push(answer.answers[queId]);
+        } else {
+          combinedSurveyAnswer[queId] = [answer.answers[queId]];
+        }
+      });
+    });
+    let questionAnswerObject = {};
+    await Promise.all(
+      Object.keys(combinedSurveyAnswer).map(async (queId) => {
+        let que = await getQuestionById(queId);
+
+        if (Object.keys(questionAnswerObject).includes(que.categoryName)) {
+          questionAnswerObject[que.categoryName].push({
+            ...que,
+            answer: combinedSurveyAnswer[queId],
+          });
+        } else {
+          questionAnswerObject[que.categoryName] = [
+            {
+              ...que,
+              answer: combinedSurveyAnswer[queId],
+            },
+          ];
+        }
+      })
+    );
+
+    Object.keys(questionAnswerObject).map(async (queCat) => {
+      questionAnswerObject[queCat].map((que, index) => {
+        switch (que.type) {
+          case "single_select":
+            let count = calculateSingleChoiceCount(que.answer);
+            questionAnswerObject[queCat][index] = {
+              ...questionAnswerObject[queCat][index],
+              answerStats: JSON.stringify(count),
+            };
+            break;
+          case "multi_select":
+            let stats = calculateMutliChoiceStates(que.answer);
+            questionAnswerObject[queCat][index] = {
+              ...questionAnswerObject[queCat][index],
+              answerStats: JSON.stringify(stats),
+            };
+            break;
+          case "rating":
+            let average = findAverage(que.answer);
+            questionAnswerObject[queCat][index] = {
+              ...questionAnswerObject[queCat][index],
+              answerStats: JSON.stringify(average),
+            };
+            break;
+          case "text":
+            break;
+          default:
+            break;
+        }
+      });
+    });
+
+    // console.log(JSON.stringify(questionAnswerObject, null, 2));
+
+    res.status(200).render("responseStats", {
+      title: "Survey Stats",
+      statsData: Object.entries(questionAnswerObject).map(([key, value]) => ({
+        key,
+        value,
+      })),
+      surveyId: req.params.surveyId,
+      surveyingForId: req.params.surveyingForId,
+      surveySentToTotal,
+      surveyAnswerByTotal,
+    });
+  } catch (e) {
+    console.log(e);
+
+    return res.status(404).render("error", {
+      title: "Not Found",
+      message: "404: Survey with that Id Not Found",
+      link: "/",
+      linkName: "Home",
+    });
+  }
+});
 
 export default router;

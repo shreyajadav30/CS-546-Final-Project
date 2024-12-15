@@ -3,7 +3,7 @@ import { Router } from "express";
 const router = Router();
 import { users } from "../config/mongoCollections.js";
 // import { validateInputsTeams, validateInputsId } from "../helpers.js";
-import { ObjectId } from "mongodb";
+// import { ObjectId } from "mongodb";
 import { usersDataFunctions } from "../data/index.js";
 import {
   checkString,
@@ -53,7 +53,7 @@ router
       const users = await usersDataFunctions.searchUser(searchTerm);
       // res.render("userList", { users, searchTerm });
       if (!users.hasError) {
-        res.render("userList", { users, searchTerm });
+        res.render("userList", {title:"userList", users, searchTerm });
       } else {
         return res.status(400).render("userList", {
           title: "userList",
@@ -86,7 +86,7 @@ router.route("/addUser").get(async (req, res) => {
   try {
     // console.log("......",req.session.user);
     const user = await usersDataFunctions.getUserById(req.session.user._id);
-    res.status(200).render("addUser", { user });
+    res.status(200).render("addUser", {title:"User", user });
   } catch (error) {
     return res.status(500).render("error", {
       title: "Error",
@@ -101,7 +101,7 @@ router.route("/addUser/:id").get(async (req, res) => {
   try {
     const user = await usersDataFunctions.getUserById(req.params.id);
     // console.log("gggggg......", user);
-    res.render("addUser", { user });
+    res.render("addUser", {title:"User", user });
   } catch (e) {
     return res.status(500).render("error", {
       title: "Error",
@@ -298,7 +298,7 @@ router.route("/userProfile/:id").get(async (req, res) => {
   try {
     const user = await usersDataFunctions.getUserById(req.params.id);
     // console.log("gggggg......", user);
-    res.render("updateUser", { user });
+    res.render("updateUser", {title:"User", user });
   } catch (e) {
     return res.status(500).render("error", {
       title: "Error",

@@ -4,7 +4,9 @@
   	{{#if (or this.isAnySurveyPending this.isAnySurveyCompleted)}}
     <div>
       <h3>Survey Name: {{this.surveyDetailsData.surveyName}}</h3>
-
+      <a target="_blank" href="/dashboard/surveystats/{{this.surveyDetailsData._id}}/{{../curUser._id}}">
+        Survey Stats
+      </a>
    {{#if this.isAnySurveyPending}}
       <ul>
         <h3>Your pending surveys!</h3>

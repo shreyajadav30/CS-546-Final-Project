@@ -1,19 +1,19 @@
 {{!-- {{#if (isEqual session.user.role "admin")}} --}}
 {{#if hasErrors}}
-    <div id="serverErrorDiv">
-      <ul class="error">
-        {{#each errors}}
-          <li>{{this}}</li>
-        {{/each}}
-      </ul>
-    </div>
-  {{/if}}
-  <div id="errorDiv" hidden>
-    <ul id="errorDivUl" class="error">
-
+  <div id="serverErrorDiv">
+    <ul class="error">
+      {{#each errors}}
+        <li>{{this}}</li>
+      {{/each}}
     </ul>
   </div>
-  {{!-- <div class="formDiv"> --}}
+{{/if}}
+<div id="errorDiv" hidden>
+  <ul id="errorDivUl" class="error">
+
+  </ul>
+</div>
+{{! <div class="formDiv"> }}
 <form action="/users" method="POST" name="userList" id="userList">
   <label class="label" for="searchTerm">Search :</label>
   <input
@@ -25,44 +25,69 @@
   />
   <input class="submit" type="submit" value="Search" />
 </form>
-<table class="table">
-  <thead>
-    <tr>
-      <th>First Name</th>
-      <th>Last Name</th>
-      <th>Email</th>
-      <th>User Id</th>
-      <th>role</th>
-      <th>
-        {{!-- <div class="add">
-          <a href="/users/addUser" class="button">+ Add</a>
-        </div> --}}
-      </th>
-    </tr>
-  </thead>
-  {{#if "searchTerm"}}
-    <tbody>
-      {{#each users}}
+{{#if "searchTerm"}}
+  {{#if users}}
+    <table class="table">
+      <thead>
         <tr>
-          <td id="firstName_{{this._id}}">{{this.firstName}}</td>
-          <td id="lastName_{{this._id}}">{{this.lastName}}</td>
-          <td id="email_{{this._id}}">{{this.email}}</td>
-          <td id="userId_{{this._id}}">{{this.userId}}</td>
-          <td id="role_{{this._id}}">{{this.role}}</td>
-          <td>
-            <form action="/users/delete/{{this._id}}" method="post">
-              <a href="/users/addUser/{{this._id}}" class="button" id="editButton_{{this._id}}">Edit</a>
-              <button type="submit" class="button" id="deleteButton_{{this._id}}">
-                Delete
-              </button>
-            </form>
-          </td>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Email</th>
+          <th>User Id</th>
+          <th>role</th>
+          <th>
+            {{! <div class="add">
+          <a href="/users/addUser" class="button">+ Add</a>
+        </div> }}
+          </th>
         </tr>
+      </thead>
+      <tbody>
+        {{#each users}}
+          <tr>
+            <td id="firstName_{{this._id}}">{{this.firstName}}</td>
+            <td id="lastName_{{this._id}}">{{this.lastName}}</td>
+            <td id="email_{{this._id}}">{{this.email}}</td>
+            <td id="userId_{{this._id}}">{{this.userId}}</td>
+            <td id="role_{{this._id}}">{{this.role}}</td>
+            <td>
+              <form action="/users/delete/{{this._id}}" method="post">
+                <a
+                  href="/users/addUser/{{this._id}}"
+                  class="button"
+                  id="editButton_{{this._id}}"
+                >Edit</a>
+                <button
+                  type="submit"
+                  class="button"
+                  id="deleteButton_{{this._id}}"
+                >
+                  Delete
+                </button>
+              </form>
+            </td>
+          </tr>
 
-      {{/each}}
-    </tbody>
-
-  {{else}}
+        {{/each}}
+      </tbody>
+    </table>
+  {{/if}}
+{{else}}
+  <table class="table1">
+    <thead>
+      <tr>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Email</th>
+        <th>User Id</th>
+        <th>role</th>
+        <th>
+          {{! <div class="add">
+          <a href="/users/addUser" class="button">+ Add</a>
+        </div> }}
+        </th>
+      </tr>
+    </thead>
     <tbody>
       {{#each users}}
         <tr>
@@ -83,11 +108,11 @@
 
       {{/each}}
     </tbody>
-  {{/if}}
-</table>
-    <a href="/users">Back to All users</a>
-    <script src="/js/users.js"></script>
-  {{!-- {{else}}
+  </table>
+{{/if}}
+<a href="/users">Back to All users</a>
+<script src="/js/users.js"></script>
+{{!-- {{else}}
 <div class="add-form">
   <form action="/users/" method="get">
     <input type="hidden" name="_id" value="{{user._id}}" />

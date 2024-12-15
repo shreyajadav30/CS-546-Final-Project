@@ -435,6 +435,7 @@ export const searchUser = async (name) => {
   };
   userName = await usersCollection.find(query).limit(50).toArray();
   // console.log('query', userName);
-  if (userName === null) throw "No user with that name found.";
+  if (userName.length ===0) throw "No user with that name found.";
+  // console.log('user',userName);
   return userName;
 };
