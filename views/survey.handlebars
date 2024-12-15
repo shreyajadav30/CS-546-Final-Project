@@ -16,6 +16,15 @@
 
 </main> --}}
 <main>
+  {{#if hasErrors}}
+    <div id="serverErrorDiv">
+      <ul class="error">
+        {{#each errors}}
+          <li>{{this}}</li>
+        {{/each}}
+      </ul>
+    </div>
+  {{/if}}
   <div id="survey-container">
     <form
       id="survey-form"

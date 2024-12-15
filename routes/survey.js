@@ -29,66 +29,124 @@ const transporter = nodemailer.createTransport({
 });
 
 router.post("/", async (req, res, next) => {
+  const userList = await userData.getAllUsers();
   const surData = req.body;
   console.log(surData);
+
+  let errors = [];
   if (!surveyData || Object.keys(surveyData).length === 0) {
-    return res
-      .status(400)
-      .json({ error: "400 : No data passed in request body" });
+    errors.push("There are no fields in the request body");
+  }
+
+  let {
+    surveyCreated,
+    surveyName,
+    startDate,
+    endDate,
+    questionnaire,
+    status,
+    userMappingData,
+    selectedQuestions,
+    inputType,
+  } = surData;
+
+  try {
+    surveyName = helper.checkString(surveyName, "Survey Name");
+  } catch (error) {
+    errors.push(error);
   }
   try {
-    let {
-      surveyCreated,
-      surveyName,
-      startDate,
-      endDate,
-      questionnaire,
-      status,
-      userMappingData,
-      selectedQuestions,
-      inputType,
-    } = surData;
-
-    surveyName = helper.checkString(surveyName, "Survey Name");
     startDate = helper.sDateValidate(startDate);
     endDate = helper.eDateValidate(startDate, endDate);
+  } catch (error) {
+    errors.push(error);
+  }
+  try {
     status = helper.statusValid(status);
-    userMappingData = JSON.parse(userMappingData);
+  } catch (error) {
+    errors.push(error);
+  }
+  try {
+    if (inputType === "manual") {
+      userMappingData = JSON.parse(userMappingData);
+      if (Object.keys(userMappingData).length <= 0) {
+        throw "Usermapping can not be empty!";
+      }
+
+      Object.keys(userMappingData).map((user) => {
+        if (userMappingData[user].length <= 0) {
+          throw "Survey by list can not be empty!!";
+        }
+      });
+    }
+  } catch (error) {
+    errors.push(error);
+  }
+  try {
     selectedQuestions = JSON.parse(selectedQuestions);
+    if (Object.keys(selectedQuestions).length <= 0) {
+      throw "Selected Questions can not be empty!";
+    }
+
+    Object.keys(selectedQuestions).map((queCat) => {
+      if (selectedQuestions[queCat].length <= 0) {
+        throw "Chosen category question list can not be empty!!";
+      }
+    });
+  } catch (error) {
+    errors.push(error);
+  }
+
+  if (errors.length > 0) {
+    return res.status(400).render("survey", {
+      hasErrors: true,
+      errors: errors,
+      title: "Survey Form",
+      userList: userList,
+      surveyCreated: surveyCreated,
+    });
+  }
+  try {
     //surveyedFor = helper.checkId(surveyedFor,"Survey For");
     //surveyedBy = helper.checkId(surveyedBy,"Survey By");
+    if (inputType === "manual") {
+      Object.keys(userMappingData).map(async (user) => {
+        let currentuser = await userData.getUserById(user);
+        let userEmail = [];
 
-    Object.keys(userMappingData).map(async (user) => {
-      let currentuser = await userData.getUserById(user);
-      let userEmail = [];
-      userMappingData[user].forEach(async (val) => {
-        const userList = await userData.getUserById(val);
-        userEmail.push(userList.email);
-      });
-      const mailOptions = {
-        from: "SurveySync100@gmail.com",
-        to: userEmail,
-        subject: "Thank you for completing the survey!",
-        text: `
+        userMappingData[user].forEach(async (val) => {
+          const userList = await userData.getUserById(val);
+          userEmail.push(userList.email);
+        });
+        const mailOptions = {
+          from: "SurveySync100@gmail.com",
+          to: userEmail,
+          subject: "Hello from surveySync!",
+          text: `
             Hi,
 
-            Thank you for participating in our survey. 
-            Your feedback is valuable to us!
+            Hope you are doing well. You are selected as 
+            respondant of ${surveyName}, and You are surveying for : ${
+            currentuser.firstName
+          } ${currentuser.lastName}
 
-            Survey Title: ${surveyName}
-            You are surveying for : ${currentuser.firstName} ${
-          currentuser.lastName
-        }
+            click on below link to fill the survey:
+            "http://localhost:3000/"
+
+            Thank you for participating in survey. 
+            Your feedback is valuable!
+
             Date: ${new Date().toLocaleDateString()}
             
             Best regards,
             The Survey Team
         `,
-      };
+        };
 
-      await transporter.sendMail(mailOptions);
-      console.log(`Email sent to ${userEmail}`);
-    });
+        await transporter.sendMail(mailOptions);
+        console.log(`Email sent to ${userEmail}`);
+      });
+    }
     // surveyedBy.forEach(async (val) => {
     //   const userList = await userData.getUserById(val);
     //   userEmail.push(userList.email);
@@ -147,11 +205,28 @@ router.post("/", async (req, res, next) => {
 
         for (let r = 2; r <= worksheet.rowCount; r++) {
           const row = worksheet.getRow(r);
-          const surveyFor = row.getCell(1).value?.toString().toLowerCase();
-          const surveyBy = row.getCell(2).value?.toString().toLowerCase();
-          console.log(`${surveyBy} is surveying for ${surveyFor}`);
+          const surveyFor = row
+            .getCell(1)
+            .value?.toString()
+            .toLowerCase()
+            .trim();
+          const surveyBy = row
+            .getCell(2)
+            .value?.toString()
+            .toLowerCase()
+            .trim();
 
           if (!surveyFor || !surveyBy) continue;
+
+          const issurveyFor = userList.some((obj) => obj.userId === surveyFor);
+          const issurveyBy = userList.some((obj) => obj.userId === surveyBy);
+
+          if (!issurveyBy) {
+            throw `user with userId ${surveyBy} not exist in the system.`;
+          }
+          if (!issurveyFor) {
+            throw `user with userId ${surveyFor} not exist in the system.`;
+          }
 
           if (!result[surveyFor]) {
             result[surveyFor] = [];
@@ -185,11 +260,54 @@ router.post("/", async (req, res, next) => {
           })
         );
 
+        Object.keys(finalRes).map(async (user) => {
+          let currentuser = await userData.getUserById(user);
+          let userEmail = [];
+
+          finalRes[user].forEach(async (val) => {
+            const userList = await userData.getUserById(val);
+            userEmail.push(userList.email);
+          });
+          const mailOptions = {
+            from: "SurveySync100@gmail.com",
+            to: userEmail,
+            subject: "Hello from surveySync!",
+            text: `
+            Hi,
+
+            Hope you are doing well. You are selected as 
+            respondant of ${surveyName}, and You are surveying for : ${
+              currentuser.firstName
+            } ${currentuser.lastName}
+
+            click on below link to fill the survey:
+            "http://localhost:3000/"
+
+            Thank you for participating in survey. 
+            Your feedback is valuable!
+
+            Date: ${new Date().toLocaleDateString()}
+            
+            Best regards,
+            The Survey Team
+        `,
+          };
+
+          await transporter.sendMail(mailOptions);
+          console.log(`Email sent to ${userEmail}`);
+        });
+
         // console.log("excel data", finalRes);
       } catch (error) {
         console.log(error);
 
-        return res.status(500).json({ error: "500 : Internal Server Error" });
+        return res.status(400).render("survey", {
+          hasErrors: true,
+          errors: [error],
+          title: "Survey Form",
+          userList: userList,
+          surveyCreated: surveyCreated,
+        });
       }
     }
 
@@ -213,7 +331,12 @@ router.post("/", async (req, res, next) => {
     }
   } catch (e) {
     console.log(e);
-    return res.status(500).json({ error: "500 : Internal Server Error" });
+    return res.status(500).render("error", {
+      title: "Error",
+      message: "Internal Server Error",
+      link: "/login",
+      linkName: "Login",
+    });
   }
 });
 

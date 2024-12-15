@@ -115,13 +115,30 @@ const addSubUserToList = (_id, accordionItem, selectedUser) => {
   surveyByList.appendChild(surveyByEle);
 };
 
+const removeSurveyFor = (id) => {
+  const elements = document.querySelectorAll(".accordion-item");
+
+  elements.forEach((element) => {
+    if (element.id === `${id}`) {
+      element.remove();
+    }
+  });
+
+  delete userMappingData[id];
+};
+
 const addUserToList = async (user) => {
   const accordionItem = document.createElement("div");
   accordionItem.className = "accordion-item";
+  accordionItem.id = user._id;
   accordionItem.innerHTML = `
+            <button type="button" class="remove-btn" onclick="removeSurveyFor('${user._id}')">Remove</button>
             <div class="accordion-header">
                 <span>${user.firstName} ${user.lastName}</span>
-                <button type="button" class="add-surveyby">+ Add Survey By</button>
+                <div>
+                  <button type="button" class="add-surveyby">+ Add Survey By</button>
+                  <button type="button" class="add-surveyby">Open</button>
+                </div>
             </div>
             <div class="accordion-content">
                 <div class="surveyby-list"></div>
@@ -323,49 +340,49 @@ const selectedQuestionListUpdate = (
     return;
   }
 
-  container.className = "selected-questions";
-  container.innerHTML = `<p>Selected Question:</p>`;
-  container.hidden = false;
+  // container.className = "selected-questions";
+  // container.innerHTML = `<p>Selected Question:</p>`;
+  // container.hidden = false;
 
-  questions.questions.forEach((que) => {
-    const divQue = document.createElement("div");
-    divQue.className = "question-item";
-    divQue.innerHTML = `<div>${que}</div><button onclick="removeQuestion('${id}', '${que}','${questionsData}', '${QuestioncategoriesData}')">
-                          &times;
-                      </button>`;
-    container.appendChild(divQue);
-  });
+  // questions.questions.forEach((que) => {
+  //   const divQue = document.createElement("div");
+  //   divQue.className = "question-item";
+  //   divQue.innerHTML = `<div>${que}</div><button onclick="removeQuestion('${id}', '${que}','${questionsData}', '${QuestioncategoriesData}')">
+  //                         &times;
+  //                     </button>`;
+  //   container.appendChild(divQue);
+  // });
 };
 
-const removeQuestion = (
-  id,
-  questionId,
-  questionsData,
-  QuestioncategoriesData
-) => {
-  const que = selectedQuestion[id];
-  if (!que) return;
+// const removeQuestion = (
+//   id,
+//   questionId,
+//   questionsData,
+//   QuestioncategoriesData
+// ) => {
+//   const que = selectedQuestion[id];
+//   if (!que) return;
 
-  que.questions = que.questions.filter((queId) => queId !== questionId);
-  const container = document.getElementById(id);
-  const questionsDiv = container.querySelector(".selected-questions");
-  const questionsSleect = container.querySelector("select[multiple]");
-  if (que.questions.length === 0) {
-    questionsDiv.hidden = true;
-    questionsDiv.innerHTML = "";
-  }
+//   que.questions = que.questions.filter((queId) => queId !== questionId);
+//   const container = document.getElementById(id);
+//   const questionsDiv = container.querySelector(".selected-questions");
+//   const questionsSleect = container.querySelector("select[multiple]");
+//   if (que.questions.length === 0) {
+//     questionsDiv.hidden = true;
+//     questionsDiv.innerHTML = "";
+//   }
 
-  Array.from(questionsSleect.options).forEach((que) => {
-    if (que.value === questionId) que.selected = false;
-  });
+//   Array.from(questionsSleect.options).forEach((que) => {
+//     if (que.value === questionId) que.selected = false;
+//   });
 
-  selectedQuestionListUpdate(
-    questionsDiv,
-    id,
-    questionsData,
-    QuestioncategoriesData
-  );
-};
+//   selectedQuestionListUpdate(
+//     questionsDiv,
+//     id,
+//     questionsData,
+//     QuestioncategoriesData
+//   );
+// };
 
 surveyForm.addEventListener("submit", (e) => {
   e.preventDefault();
