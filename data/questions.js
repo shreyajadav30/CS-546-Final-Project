@@ -33,7 +33,7 @@ const getAllQuestionsByCategoryName = async (categoryName) => {
 };
 
 const getQuestionById = async (id) => {
-	id = validationMethods.isValidObjectId(id);
+	id = validationMethods.isValidString(id, 'Question ID');
 	const questionsCollection = await questions();
 	const category = await questionsCollection.findOne(
 		{ 'questions.questionId': id },
@@ -66,10 +66,32 @@ const addQuestionToCategory = async (categoryName, questionData) => {
 	}
 };
 
+const deleteQuestion = async (questionId) => {
+	questionId = validationMethods.isValidString(questionId, 'Question ID');
+	const questionsCollection = await questions();
+	const category = await questionsCollection.findOne({
+		'questions.questionId': questionId,
+	});
+	if (!category) throw new Error('Question not found');
+	const questionToDelete = category.questions.find(
+		(question) => question.questionId === questionId
+	);
+	const updateInfo = await questionsCollection.updateOne(
+		{ 'questions.questionId': questionId },
+		{ $pull: { questions: { questionId } } }
+	);
+
+	if (updateInfo.modifiedCount === 0) {
+		throw new Error('Failed to delete the question');
+	}
+	return questionToDelete;
+};
+
 export {
 	getAllCategories,
 	getAllQuestions,
 	getAllQuestionsByCategoryName,
 	getQuestionById,
 	addQuestionToCategory,
+	deleteQuestion,
 };
