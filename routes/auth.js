@@ -5,8 +5,20 @@ import {
   isValidEmail,
 } from "../utils/helpers/helpers.js";
 import { isValidPassword } from "../utils/helpers/bcryptHelper.js";
-import { signInUser, signUpUser } from "../data/users.js";
+import { signInUser, signUpUser,
+    getUserByEmail, setResetToken, validateResetToken, updatePassword
+} from "../data/users.js";
+import nodemailer from "nodemailer";
+import { validationMethods } from "../utils/helpers/validations.js";
 const router = Router();
+
+const transporter = nodemailer.createTransport({
+    service: "Gmail",
+    auth: {
+      user: "SurveySync100@gmail.com",
+      pass: "ddcg crof hpjf ddev",
+    },
+  });
 
 router
   .route("/register")
@@ -233,5 +245,76 @@ router.route("/signoutuser").get(async (req, res) => {
   req.session.destroy();
   return res.status(200).render("signoutuser", { title: "Sign Out" });
 });
+
+router
+    .route('/forgot-password')
+    .get((req, res) => {
+        res.render('forgotPassword', { title: 'Forgot Password' });
+    })
+    .post(async (req, res) => {     
+        let email;
+        try {
+            email = validationMethods.isValidString(req.body.email, "User email");
+            if (!isValidEmail(email)) {
+                throw new Error("Invalid email");
+            }
+        } catch (error) {
+            return res.status(403).render('error', {
+                title: 'Error',
+                message: error.message,
+                link: '/dashboard',
+                linkName: 'Dashboard',
+            });
+        }
+        try {
+            const user = await getUserByEmail(email);
+            const { resetToken } = await setResetToken(user._id);
+            const resetLink = `${req.protocol}://${req.get(
+                "host"
+            )}/auth/reset-password?token=${resetToken}&id=${user._id}`;
+            await transporter.sendMail({
+                from: "SurveySync100@gmail.com",
+                to: user.email,
+                subject: "Password Reset",
+                text: `Reset your password using this link: ${resetLink}`,
+            });
+            res.json({ message: "Password reset email sent" });
+        } catch (error) {
+            res.status(500).json({ error: "Internal server error" });
+        }
+    });
+
+
+router
+    .route('/reset-password')
+    .get(async (req, res) => {
+        let { token, id } = req.query;
+        try {
+            token = checkString(token, 'Request Token');
+            id = checkString(id, 'Request Token');
+            res.render('resetPassword', { title: 'Reset Password', token, id });
+        } catch (error) {
+            res.status(400).render('error', {
+                title: 'Error',
+                message: 'Invalid or expired reset link',
+                link: '/auth/forgot-password',
+                linkName: 'Request a new reset link',
+            });
+        }
+    })
+    .post(async (req, res) => {
+        let { token, id, newPassword } = req.body;
+        try {
+            token = checkString(token, 'Request Token');
+            id = checkString(id, 'Request Token')
+            newPassword = checkString(newPassword, "New Password");
+            newPassword = isValidPassword(newPassword);
+            await validateResetToken(id, token);
+            await updatePassword(id, newPassword);
+            res.status(200).render("login", { title: "Login" });
+        } catch (error) {
+            res.status(400).json({ error: error.message });
+        }
+    });
 
 export default router;
