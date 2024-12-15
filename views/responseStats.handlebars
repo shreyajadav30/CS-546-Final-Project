@@ -12,6 +12,7 @@
 <div class="filled_sruevy_Container">
   {{#each statsData}}
     <h1>{{key}}</h1>
+    {{!-- {{#if isDataValaible}} --}}
     <div class="chartContainer surveyFilledContainer">
       {{#each value}}
         {{#if (isEqual this.type "rating")}}
@@ -72,6 +73,9 @@
         {{/if}}
       {{/each}}
     </div>
+    {{!-- {{else}}
+      <h2>You don't have have any responses yet!</h2>
+    {{/if}} --}}
   {{/each}}
 
 </div>
