@@ -159,3 +159,17 @@ export const getSurveyAnswerStatisticsForAdmin = async (surveyId) => {
 
   return answer;
 };
+export const getSurveyListForUser = async (userId) => {
+  const answerCollection = await surveyAnswer();
+  const answer = await answerCollection
+    .find({
+      surveyingFor: userId.toString(),
+    })
+    .toArray();
+
+  if (!answer) {
+    return [];
+  }
+
+  return answer;
+};

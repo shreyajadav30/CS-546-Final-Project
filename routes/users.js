@@ -10,6 +10,9 @@ import {
   isContainsNumber,
   isValidEmail,
 } from "../utils/helpers/helpers.js";
+import { getSurveyListForUser } from "../data/dashboard.js";
+import { getAllUserWithProvidedIds } from "../data/users.js";
+import { getAllSurveysWithProvidedIds } from "../data/survey.js";
 
 router
   .route("/")
@@ -18,7 +21,9 @@ router
       const users = await usersDataFunctions.getAllUsers();
       // console.log(users);
       const user = await usersDataFunctions.getUserById(req.session.user._id);
-      res.status(200).render("userList", { title: "userList" ,users, user, searchTerm: "" });
+      res
+        .status(200)
+        .render("userList", { title: "userList", users, user, searchTerm: "" });
       // res.render("userList", { users });
     } catch (error) {
       return res.status(500).render("error", {
@@ -26,7 +31,7 @@ router
         message: "Internal Server Error",
         link: "/dasboard",
         linkName: "Dasboard",
-      })
+      });
     }
   })
   .post(async (req, res) => {
@@ -53,7 +58,7 @@ router
       const users = await usersDataFunctions.searchUser(searchTerm);
       // res.render("userList", { users, searchTerm });
       if (!users.hasError) {
-        res.render("userList", {title:"userList", users, searchTerm });
+        res.render("userList", { title: "userList", users, searchTerm });
       } else {
         return res.status(400).render("userList", {
           title: "userList",
@@ -64,7 +69,7 @@ router
       }
     } catch (e) {
       // console.log('eeeee',e);
-      if(e==="No user with that name found."){
+      if (e === "No user with that name found.") {
         return res.status(400).render("userList", {
           title: "userList",
           hasErrors: true,
@@ -86,14 +91,14 @@ router.route("/addUser").get(async (req, res) => {
   try {
     // console.log("......",req.session.user);
     const user = await usersDataFunctions.getUserById(req.session.user._id);
-    res.status(200).render("addUser", {title:"User", user });
+    res.status(200).render("addUser", { title: "User", user });
   } catch (error) {
     return res.status(500).render("error", {
       title: "Error",
       message: "Internal Server Error",
       link: "/dasboard",
       linkName: "Dasboard",
-    })
+    });
   }
 });
 
@@ -101,14 +106,14 @@ router.route("/addUser/:id").get(async (req, res) => {
   try {
     const user = await usersDataFunctions.getUserById(req.params.id);
     // console.log("gggggg......", user);
-    res.render("addUser", {title:"User", user });
+    res.render("addUser", { title: "User", user });
   } catch (e) {
     return res.status(500).render("error", {
       title: "Error",
       message: "Internal Server Error",
       link: "/dasboard",
       linkName: "Dasboard",
-    })
+    });
   }
 });
 
@@ -161,14 +166,15 @@ router.route("/addUser").post(async (req, res) => {
     if (!isValidEmail(createUserData.email)) {
       throw "Invalid email!!";
     }
-    if(req.session.user.email !== createUserData.email){
+    if (req.session.user.email !== createUserData.email) {
       const user = await usersCollection.findOne({
         email: { $regex: new RegExp(createUserData.email, "i") },
       });
-  
+
       if (user) {
         throw "email already exist!";
-      }}
+      }
+    }
   } catch (e) {
     errors.push(e);
   }
@@ -182,14 +188,15 @@ router.route("/addUser").post(async (req, res) => {
     if (createUserData.userId.length < 5 || createUserData.userId.length > 10) {
       throw "userId should be at least 5 characters long with a max of 10 characters!!";
     }
-    if(req.session.user.userId !== createUserData.userId){
+    if (req.session.user.userId !== createUserData.userId) {
       const user = await usersCollection.findOne({
         userId: { $regex: new RegExp(`${createUserData.userId}`, "i") },
       });
-  
+
       if (user) {
         throw "UserId already exist!";
-      }}
+      }
+    }
   } catch (e) {
     errors.push(e);
   }
@@ -258,7 +265,7 @@ router.route("/delete/:id").post(async (req, res) => {
       message: "Internal Server Error",
       link: "/dasboard",
       linkName: "Dasboard",
-    })
+    });
   }
 });
 
@@ -273,7 +280,7 @@ router.route("/getAllUsers").get(async (req, res) => {
       message: "Internal Server Error",
       link: "/dasboard",
       linkName: "Dasboard",
-    })
+    });
   }
 });
 
@@ -282,15 +289,43 @@ router.route("/userProfile").get(async (req, res) => {
     const users = await usersDataFunctions.getAllUsers();
     // console.log(users);
     const user = await usersDataFunctions.getUserById(req.session.user._id);
-    res.render("userProfile", { title:"Profile", users, user, searchTerm: "" });
+
+    let isSurveyAvailableForThisUser = false;
+    let listOfSurvey = await getSurveyListForUser(req.session.user._id);
+
+    // console.log(listOfSurvey);
+    let surveyData = [];
+    if (listOfSurvey.length > 0) {
+      isSurveyAvailableForThisUser = true;
+      surveyData = await getAllSurveysWithProvidedIds(
+        listOfSurvey.map((obj) => obj["surveyId"])
+      );
+    }
+
+    // Promise.all(
+    //   listOfSurvey.map(async (answer) => {
+
+    //   })
+    // );
+
+    res.render("userProfile", {
+      title: "Profile",
+      users,
+      user,
+      searchTerm: "",
+      isSurveyAvailableForThisUser,
+      surveyData,
+    });
     // res.render("userList", { users });
   } catch (error) {
+    console.log(error);
+
     return res.status(500).render("error", {
       title: "Error",
       message: "Internal Server Error",
       link: "/dasboard",
       linkName: "Dasboard",
-    })
+    });
   }
 });
 
@@ -298,14 +333,14 @@ router.route("/userProfile/:id").get(async (req, res) => {
   try {
     const user = await usersDataFunctions.getUserById(req.params.id);
     // console.log("gggggg......", user);
-    res.render("updateUser", {title:"User", user });
+    res.render("updateUser", { title: "User", user });
   } catch (e) {
     return res.status(500).render("error", {
       title: "Error",
       message: "Internal Server Error",
       link: "/dasboard",
       linkName: "Dasboard",
-    })
+    });
   }
 });
 router.route("/userProfile").post(async (req, res) => {
@@ -357,14 +392,15 @@ router.route("/userProfile").post(async (req, res) => {
     if (!isValidEmail(createUserData.email)) {
       throw "Invalid email!!";
     }
-    if(req.session.user.email != createUserData.email){
+    if (req.session.user.email != createUserData.email) {
       const user = await usersCollection.findOne({
         email: { $regex: new RegExp(createUserData.email, "i") },
       });
-  
+
       if (user) {
         throw "email already exist!";
-      }}
+      }
+    }
   } catch (e) {
     errors.push(e);
   }
@@ -379,14 +415,15 @@ router.route("/userProfile").post(async (req, res) => {
       throw "userId should be at least 5 characters long with a max of 10 characters!!";
     }
     // mongo check case insensitvely : ref: https://stackoverflow.com/questions/8246019/case-insensitive-search-in-mongo
-    if(req.session.user.userId !== createUserData.userId){
+    if (req.session.user.userId !== createUserData.userId) {
       const user = await usersCollection.findOne({
         userId: { $regex: new RegExp(`${createUserData.userId}`, "i") },
       });
-  
+
       if (user) {
         throw "UserId already exist!";
-      }}
+      }
+    }
   } catch (e) {
     errors.push(e);
   }

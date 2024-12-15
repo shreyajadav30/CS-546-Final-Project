@@ -1,0 +1,15 @@
+<h1>{{surveyDataForGiveSurvey.surveyName}}</h1>
+{{#each allUserToWhomSurveySent}}
+  <div>
+    <h2>
+      {{this.firstName}}
+      {{this.lastName}}
+        <span>
+          <a target="_blank" href="/dashboard/surveystats/{{../surveyDataForGiveSurvey._id}}/{{this._id}}">
+            Survey Stats
+          </a>
+        </span>
+      </h3>
+    </h2>
+  </div>
+{{/each}}
