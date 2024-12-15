@@ -385,3 +385,18 @@ surveyForm.addEventListener("submit", (e) => {
   e.target.submit();
   // surveyForm.submit();
 });
+
+function userMappingSelection(selection) {
+  const excel_upload = document.getElementById("excel_upload");
+  const mnaulDataEntry = document.getElementById("dropdown-container");
+
+  if (selection === "excel") {
+    excel_upload.style.display = "block";
+    mnaulDataEntry.style.display = "none";
+    excel_upload.required = true;
+  } else if (selection === "manual") {
+    excel_upload.style.display = "none";
+    mnaulDataEntry.style.display = "block";
+    excel_upload.required = false;
+  }
+}

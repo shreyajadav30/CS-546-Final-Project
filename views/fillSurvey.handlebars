@@ -1,9 +1,19 @@
-<form {{!-- action="/surveys/submit" method="POST" --}}>
+
+ {{#if hasErrors}}
+    <div id="serverErrorDiv">
+      <ul class="error">
+        {{#each errors}}
+          <li>{{this}}</li>
+        {{/each}}
+      </ul>
+    </div>
+  {{/if}}
+<form action="/dashboard/fillSurvey/{{surveyId}}/{{surveyingForId}}" method="POST" >
 	 {{#each questions}}
 	 <h1>{{this.category}}</h1>
 	{{#each this.questions}}
 		<div class="question-block">
-			<label for="question_{{this.questionId}}">{{this.questionText}}</label>
+			<p>{{this.questionText}}</p>
 
 			{{#if (or (isEqual this.type "single_select") (isEqual this.type "multi_select"))}}
 				<ul>
@@ -13,7 +23,7 @@
 								<input
 									type="radio"
 									id="option_{{@index}}_{{../questionId}}"
-									name="question_{{../questionId}}"
+									name="{{../questionId}}"
 									value="{{this}}"
 									required
 								/>
@@ -21,7 +31,7 @@
 								<input
 									type="checkbox"
 									id="option_{{@index}}_{{../questionId}}"
-									name="question_{{../questionId}}[]"
+									name="{{../questionId}}[]"
 									value="{{this}}"
 								/>
 							{{/if}}
@@ -32,7 +42,8 @@
 			{{/if}}
 
 			{{#if (isEqual this.type "rating")}}
-				<select id="question_{{this.questionId}}" name="question_{{this.questionId}}" required>
+				<select id="{{this.questionId}}" name="{{this.questionId}}" required>
+					<option value="" disabled selected>Rating</option>
 					{{#each (range 1 this.scale)}}
 						<option value="{{this}}">{{this}}</option>
 					{{/each}}
@@ -41,8 +52,8 @@
 
 			{{#if (isEqual this.type "text")}}
 				<textarea
-					id="question_{{this.questionId}}"
-					name="question_{{this.questionId}}"
+					id="{{this.questionId}}"
+					name="{{this.questionId}}"
 					required
 				></textarea>
 			{{/if}}
@@ -50,5 +61,5 @@
 	{{/each}}
 	{{/each}}
 
-	{{!-- <button type="submit">Submit Survey</button> --}}
+	<button type="submit">Submit Survey</button>
 </form>

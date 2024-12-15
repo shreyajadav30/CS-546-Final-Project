@@ -4,14 +4,17 @@ import * as userData from "../data/users.js";
 import * as helper from "../utils/helpers/survey.js";
 import nodemailer from "nodemailer";
 import { questionsDataFunctions } from "../data/index.js";
+import ExcelJS from "exceljs";
 
 const router = Router();
 router.get("/", async (req, res) => {
   const userList = await userData.getAllUsers();
   const surveyCreated = req.session.user._id;
-  res
-    .status(200)
-    .render("survey", { title: "Survey Form", userList: userList, surveyCreated : surveyCreated });
+  res.status(200).render("survey", {
+    title: "Survey Form",
+    userList: userList,
+    surveyCreated: surveyCreated,
+  });
 });
 
 // Add this Google Account
@@ -43,6 +46,7 @@ router.post("/", async (req, res, next) => {
       status,
       userMappingData,
       selectedQuestions,
+      inputType,
     } = surData;
 
     surveyName = helper.checkString(surveyName, "Survey Name");
@@ -89,6 +93,107 @@ router.post("/", async (req, res, next) => {
     //   const userList = await userData.getUserById(val);
     //   userEmail.push(userList.email);
     // });
+    let finalRes = {};
+    if (inputType !== "manual") {
+      try {
+        // console.log(req.files, req.body);
+
+        if (!req.files?.file) {
+          throw "No file";
+        }
+
+        const { file } = req.files;
+        const fileExtension = file.name.split(".").pop().toLowerCase();
+
+        // console.log(file.name);
+
+        if (!["xlsx", "csv"].includes(fileExtension)) {
+          throw "Only csv and excel supported.";
+        }
+
+        const workbook = new ExcelJS.Workbook();
+
+        if (fileExtension === "csv") {
+          await workbook.csv.load(file.data);
+        } else {
+          await workbook.xlsx.load(file.data);
+        }
+
+        const worksheet = workbook.worksheets[0];
+
+        // console.log(worksheet);
+
+        if (!worksheet || worksheet.rowCount < 2) {
+          throw "empty file";
+        }
+
+        const headers = [];
+        worksheet.getRow(1).eachCell((cell) => {
+          headers.push(cell.value?.toString().toLowerCase() || "");
+        });
+
+        // console.log(headers, "header");
+
+        if (
+          headers[0].toLowerCase() !== "SurveyFor".toLowerCase() ||
+          headers[1].toLowerCase() !== "SurveyBy".toLowerCase()
+        ) {
+          throw "two columns must be SurveyFor or SurveyBy";
+        }
+
+        const result = {};
+
+        // console.log(worksheet.rowCount);
+
+        for (let r = 2; r <= worksheet.rowCount; r++) {
+          const row = worksheet.getRow(r);
+          const surveyFor = row.getCell(1).value?.toString().toLowerCase();
+          const surveyBy = row.getCell(2).value?.toString().toLowerCase();
+          console.log(`${surveyBy} is surveying for ${surveyFor}`);
+
+          if (!surveyFor || !surveyBy) continue;
+
+          if (!result[surveyFor]) {
+            result[surveyFor] = [];
+          }
+
+          if (Object.keys(result).includes(surveyFor)) {
+            if (!result[surveyFor].includes(surveyBy)) {
+              result[surveyFor].push(surveyBy);
+            }
+          } else {
+            result[surveyFor] = [surveyBy];
+          }
+        }
+
+        await Promise.all(
+          Object.keys(result).map(async (userMap) => {
+            let surveyinForUSer = await userData.getUserByUserId(userMap);
+            finalRes[surveyinForUSer._id] = [];
+            // console.log(userMap, "==========", result[userMap]);
+
+            if (result[userMap].length) {
+              await Promise.all(
+                result[userMap].map(async (surveyByUserId) => {
+                  let surveybyUSer = await userData.getUserByUserId(
+                    surveyByUserId
+                  );
+                  finalRes[surveyinForUSer._id].push(surveybyUSer._id);
+                })
+              );
+            }
+          })
+        );
+
+        // console.log("excel data", finalRes);
+      } catch (error) {
+        console.log(error);
+
+        return res.status(500).json({ error: "500 : Internal Server Error" });
+      }
+    }
+
+    // console.log("userMappingData", userMappingData);
 
     const surveyDetails = await surveyData.addSurvey(
       surveyCreated,
@@ -97,7 +202,7 @@ router.post("/", async (req, res, next) => {
       endDate,
       questionnaire,
       status,
-      userMappingData,
+      inputType === "manual" ? userMappingData : finalRes,
       selectedQuestions
     );
 
@@ -123,15 +228,15 @@ router.route("/getAllQuestion").get(async (req, res) => {
 });
 
 router.route("/surveyList").get(async (req, res) => {
-try {
-  const userId = req.session.user._id;
-  const surveyCollection = await surveyData.getSurveyList(userId);
-  res
-  .status(200)
-  .render("surveyList", { title: "Survey List", surveyCollection});
-} catch (e) {
-  return res.status(500).json({ error: e.message });
-}
+  try {
+    const userId = req.session.user._id;
+    const surveyCollection = await surveyData.getSurveyList(userId);
+    res
+      .status(200)
+      .render("surveyList", { title: "Survey List", surveyCollection });
+  } catch (e) {
+    return res.status(500).json({ error: e.message });
+  }
 });
 
 router.route("/delete/:id").post(async (req, res) => {
