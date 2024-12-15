@@ -211,7 +211,6 @@ try {
     console.error('Error updating survey:', error);
     throw new Error('Failed to update survey');
   }
-}
 
 export const getAllSurveysWithProvidedIds = async (ids) => {
   if (!ids) {

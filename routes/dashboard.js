@@ -96,25 +96,27 @@ const getSurveyQuestionsDetails = async (id) => {
 
 router.route("/").get(async (req, res) => {
   const user = await usersDataFunctions.getUserById(req.session.user._id);
-//   try{
-//     if (!user) {
-//       return res.status(404).render("error", {
-//         title: "Not Found",
-//         message: "404: Not Found",
-//         link: "/",
-//         linkName: "Home",
-//       });
-//     }
-//     console.log(user.surveys);
+  try{
+    if (!user) {
+      return res.status(404).render("error", {
+        title: "Not Found",
+        message: "404: Not Found",
+        link: "/",
+        linkName: "Home",
+      });
+    }
+    console.log(user.surveys);
+    let surveyDetails = await getSurveyDetails(user.surveys);
+    console.log(surveyDetails);
 
-// //     if(surveyDetails === null){
+//     if(surveyDetails === null){
       
-// //     }
+//     }
     
 //     res.status(200).render("dashboard", { title: "Dashboard", surveyDetails });
 //   }catch(e){
 //     console.log(e);
-//     // return res.status(404).json({ error: "404:No survey with that id"});
+//     return res.status(404).json({ error: "404:No survey with that id"});
 //   }
   
 
