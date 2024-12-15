@@ -130,3 +130,32 @@ export const getSurveyAnswer = async (surveyId, surveyedBy, surveyingForId) => {
 
   return answer;
 };
+export const getSurveyAnswerStatistics = async (surveyId, surveyFor) => {
+  const answerCollection = await surveyAnswer();
+  const answer = await answerCollection
+    .find({
+      surveyId: surveyId.toString(),
+      surveyingFor: surveyFor.toString(),
+    })
+    .toArray();
+
+  if (!answer) {
+    throw "No answer found";
+  }
+
+  return answer;
+};
+export const getSurveyAnswerStatisticsForAdmin = async (surveyId) => {
+  const answerCollection = await surveyAnswer();
+  const answer = await answerCollection
+    .find({
+      surveyId: surveyId.toString(),
+    })
+    .toArray();
+
+  if (!answer) {
+    throw "No answer found";
+  }
+
+  return answer;
+};
