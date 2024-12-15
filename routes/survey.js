@@ -10,11 +10,17 @@ const router = Router();
 router.get("/", async (req, res) => {
   const userList = await userData.getAllUsers();
   const surveyCreated = req.session.user._id;
-  res.status(200).render("survey", {
-    title: "Survey Form",
-    userList: userList,
-    surveyCreated: surveyCreated,
-  });
+
+  res
+    .status(200)
+    .render("survey", { title: "Survey Form", isEditMode: false, userList: userList, surveyCreated : surveyCreated });
+
+//   res.status(200).render("survey", {
+//     title: "Survey Form",
+//     userList: userList,
+//     surveyCreated: surveyCreated,
+//   });
+
 });
 
 // Add this Google Account
@@ -409,4 +415,5 @@ router.route("/stats/:id").get(async (req, res) => {
     });
   }
 });
+
 export default router;

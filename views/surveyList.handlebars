@@ -17,12 +17,12 @@
           <td>{{this.endDate}}</td>
           <td>{{this.status}}</td>
           <td>
-            <form action="/survey/delete/{{this._id}}" method="post">
-              <a href="/survey/edit/{{this._id}}" class="button">Edit</a>
+            <form action="/surveylist/delete/{{this._id}}" method="post">
               <button type="submit" class="button">
                 Delete
               </button>
             </form>
+            <a href="/surveylist/edit/{{this._id}}">Edit</a>
           </td>
           <td>
             <a

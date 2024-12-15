@@ -1,4 +1,4 @@
-<div>
+{{!-- <div>
   <h1>Your surveys!</h1>
   {{#each surveyDetails}}
   {{#if (isEqual this.surveyDetailsData.status "active")}}
@@ -89,4 +89,41 @@
       {{/if}}
       {{/if}}
   {{/each}}
+</div> --}}
+
+<div>
+  <h1>Your surveys!</h1>
+  
+  {{#if surveyDetails}}
+    {{#if surveyDetails.length}}
+      {{#each surveyDetails}}
+        <div>
+          <h3>Survey Name: {{this.surveyDetailsData.surveyName}}</h3>
+
+          <ul>
+            <h3>You are giving surveys!</h3>
+            {{#if this.surveyingForData.length}}
+              {{#each this.surveyingForData}}
+                <li>
+                  {{this.firstName}} {{this.lastName}}
+                  <a
+                    target="_blank"
+                    href="/dashboard/fillSurvey/{{../this.surveyDetailsData._id}}"
+                  >
+                    Fill now
+                  </a>
+                </li>
+              {{/each}}
+            {{else}}
+              <li>No participants available for this survey.</li>
+            {{/if}}
+          </ul>
+        </div>
+      {{/each}}
+    {{else}}
+      <p>No surveys are currently available.</p>
+    {{/if}}
+  {{else}}
+    <p>Data not loaded. Please try again later.</p>
+  {{/if}}
 </div>
