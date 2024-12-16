@@ -17,3 +17,11 @@
   font-size: 24px;
   font-weight: bold;
 }
+.aiGeneratedText {
+  text-align: justify;
+}
+
+.aiNotice {
+  text-align: justify;
+  color: red;
+}
