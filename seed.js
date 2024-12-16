@@ -420,6 +420,8 @@ async function seedDatabase() {
         "_id": new ObjectId("675e1a06807f1c0fbc0fc794"),
         "surveyCreated": "675d0618c1fb590c363cb0c2",
         "surveyName": "Team Engagement Survey",
+        "startDate": "2024-12-10",
+        "endDate": "2024-12-26",
         "surveyQuestionList": null,
         "status": "active",
         "userMapping": [
@@ -460,6 +462,8 @@ async function seedDatabase() {
         "_id" : new ObjectId("675e1a06807f1c0fbc0fc795"),
         "surveyCreated": "675d352df23102cea187efdd",
         "surveyName": "Event Satisfaction Survey",
+        "startDate": "2024-11-10",
+        "endDate": "2024-12-30",
         "surveyQuestionList": null,
         "status": "active",
         "userMapping": [
@@ -505,6 +509,8 @@ async function seedDatabase() {
         "_id": new ObjectId("675e1a06807f1c0fbc0fc796"),
         "surveyCreated": "675d352df23102cea187efdc",
         "surveyName": "Wellness Program Survey",
+        "startDate": "2024-12-10",
+        "endDate": "2025-02-26",
         "surveyQuestionList": null,
         "status": "active",
         "userMapping": [
