@@ -1,5 +1,12 @@
 import { ObjectId } from 'mongodb';
 
+const questionTypes = [
+	{ name: 'Text', type: 'text' },
+	{ name: 'Rating', type: 'rating' },
+	{ name: 'Single Select', type: 'single_select' },
+	{ name: 'Multi Select', type: 'multi_select' },
+];
+
 const isValidBoolean = (bool, paramName = 'Parameter') => {
 	if (typeof bool !== 'boolean') {
 		throw new Error(`${paramName} must be a boolean value`);
@@ -82,6 +89,26 @@ const isValidArrayOfStrings = (arr, paramName = 'Array') => {
 	return trimmedArray;
 };
 
+const isValidQuestionType = (type, paramName = 'Type') => {
+	type = isValidString(type);
+	const isValid = questionTypes.some((q) => q.type === type);
+	if (!isValid) {
+		throw new Error(`${paramName} is not a valid value!`);
+	}
+	return type;
+};
+
+const isValidScale = (scale, paramName = 'Scale') => {
+	const numericScale = Number(scale);
+	if (!Number.isInteger(numericScale)) {
+		throw new Error(`${paramName} must be a whole number.`);
+	}
+	if (numericScale < 3 || numericScale > 10) {
+		throw new Error(`${paramName} must be between 3 and 10.`);
+	}
+	return numericScale;
+};
+
 const validationMethods = {
 	isValidBoolean,
 	isValidString,
@@ -91,8 +118,10 @@ const validationMethods = {
 	isValidObject,
 	isValidObjectId,
 	isValidArrayOfStrings,
+	isValidQuestionType,
+	isValidScale,
 };
 
 const saltRounds = 16;
 
-export { validationMethods, saltRounds };
+export { validationMethods, saltRounds, questionTypes };

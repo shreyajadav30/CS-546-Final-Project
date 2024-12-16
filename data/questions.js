@@ -49,8 +49,26 @@ const getQuestionById = async (id) => {
 };
 
 const addQuestionToCategory = async (categoryName, questionData) => {
-	// Todo: Add validation
 	categoryName = validationMethods.isValidString(categoryName);
+	const { questionId, questionText, type, useCount, scale, options } =
+		questionData;
+	questionData.questionId = validationMethods.isValidString(
+		questionId,
+		'Question ID'
+	);
+	questionData.questionText = validationMethods.isValidString(
+		questionText,
+		'Question text'
+	);
+	questionData.type = validationMethods.isValidQuestionType(
+		type,
+		'Question type'
+	);
+	questionData.scale = validationMethods.isValidScale(scale, 'Rating scale');
+	questionData.options = validationMethods.isValidArrayOfStrings(
+		options,
+		'Options'
+	);
 	const questionsCollection = await questions();
 	let category = await questionsCollection.findOne({ categoryName });
 	if (!category) {
