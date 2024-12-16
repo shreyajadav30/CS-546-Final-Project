@@ -5,17 +5,17 @@
   <h2>Active Surveys</h2>
   	{{#if (or this.isAnySurveyPending this.isAnySurveyCompleted)}}
     <div>
-      <h3>Survey Name: {{this.surveyDetailsData.surveyName}}
+      <p>Survey Name: {{this.surveyDetailsData.surveyName}}
         <span>
           <a href="/dashboard/surveystats/{{this.surveyDetailsData._id}}/{{../curUser._id}}">
             Survey Stats
           </a>
         </span>
-      </h3>
+      </p>
     
    {{#if this.isAnySurveyPending}}
+      <p>Your pending surveys!</p>
       <ul>
-        <h3>Your pending surveys!</h3>
         {{#each this.surveyingForData}}
           <li>
             {{this.firstName}}
@@ -28,9 +28,8 @@
       </ul>
       {{/if}}
         {{#if this.isAnySurveyCompleted}}
-      <ul>
-      
-        <h3>Completed survyes!</h3>
+      <p>Completed survyes!</p>
+      <ul> 
         {{#each this.completedSurvey}}
           <li>
             {{this.firstName}}
@@ -57,8 +56,8 @@
         </span>
       </h3> 
    {{#if this.isAnySurveyPending}}
+           <p>Your pending surveys!</p>
       <ul>
-        <h3>Your pending surveys!</h3>
         {{#each this.surveyingForData}}
           <li>
             {{this.firstName}}
@@ -68,10 +67,10 @@
       </ul>
       {{/if}}
         {{#if this.isAnySurveyCompleted}}
+                <p>Completed survyes!</p>
+
       <ul>
-      
-        <h3>Completed survyes!</h3>
-        {{#each this.completedSurvey}}
+              {{#each this.completedSurvey}}
           <li>
             {{this.firstName}}
             {{this.lastName}}

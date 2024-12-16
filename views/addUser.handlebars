@@ -16,7 +16,7 @@
   {{!-- <div class="formDiv"> --}}
 <div class="add-form">
   <form action="/users/addUser" method="post" id="addUser" name="addUser">
-    <input type="hidden" name="_id" value="{{user._id}}" />
+    <input type="hidden" name="_id" value="{{user._id}}">
     <div class="form">
       <label>First Name</label>
       <input
@@ -26,7 +26,7 @@
         placeholder="firstName"
         required
         value="{{user.firstName}}"
-      />
+      >
     </div>
     <div class="form">
       <label>Last Name</label>
@@ -37,7 +37,7 @@
         placeholder="lastName"
         required
         value="{{user.lastName}}"
-      />
+      >
     </div>
     <div class="form">
       <label>Email</label>
@@ -48,7 +48,7 @@
         placeholder="email"
         required
         value="{{user.email}}"
-      />
+      >
     </div>
     <div class="form">
       <label>User Id</label>
@@ -59,7 +59,7 @@
         placeholder="userId"
         required
         value="{{user.userId}}"
-      />
+      >
     </div>
     <div class="form">
       <label>Role</label>
@@ -70,7 +70,7 @@
         placeholder="role"
         required
         value="{{user.role}}"
-      />
+      >
     </div>
     <div>
       <a href="/users/" class="button">☰ View All</a>

@@ -29,8 +29,8 @@ router
       return res.status(500).render("error", {
         title: "Error",
         message: "Internal Server Error",
-        link: "/dasboard",
-        linkName: "Dasboard",
+        link: "/dashboard",
+        linkName: "Dashboard",
       });
     }
   })
@@ -81,8 +81,8 @@ router
       return res.status(500).render("error", {
         title: "Error",
         message: "Internal Server Error",
-        link: "/dasboard",
-        linkName: "Dasboard",
+        link: "/dashboard",
+        linkName: "Dashboard",
       });
     }
   });
@@ -96,8 +96,8 @@ router.route("/addUser").get(async (req, res) => {
     return res.status(500).render("error", {
       title: "Error",
       message: "Internal Server Error",
-      link: "/dasboard",
-      linkName: "Dasboard",
+      link: "/dashboard",
+      linkName: "Dashboard",
     });
   }
 });
@@ -111,8 +111,8 @@ router.route("/addUser/:id").get(async (req, res) => {
     return res.status(500).render("error", {
       title: "Error",
       message: "Internal Server Error",
-      link: "/dasboard",
-      linkName: "Dasboard",
+      link: "/dashboard",
+      linkName: "Dashboard",
     });
   }
 });
@@ -263,8 +263,8 @@ router.route("/delete/:id").post(async (req, res) => {
     return res.status(500).render("error", {
       title: "Error",
       message: "Internal Server Error",
-      link: "/dasboard",
-      linkName: "Dasboard",
+      link: "/dashboard",
+      linkName: "Dashboard",
     });
   }
 });
@@ -278,8 +278,8 @@ router.route("/getAllUsers").get(async (req, res) => {
     return res.status(500).render("error", {
       title: "Error",
       message: "Internal Server Error",
-      link: "/dasboard",
-      linkName: "Dasboard",
+      link: "/dashboard",
+      linkName: "Dashboard",
     });
   }
 });
@@ -323,8 +323,8 @@ router.route("/userProfile").get(async (req, res) => {
     return res.status(500).render("error", {
       title: "Error",
       message: "Internal Server Error",
-      link: "/dasboard",
-      linkName: "Dasboard",
+      link: "/dashboard",
+      linkName: "Dashboard",
     });
   }
 });
@@ -338,8 +338,8 @@ router.route("/userProfile/:id").get(async (req, res) => {
     return res.status(500).render("error", {
       title: "Error",
       message: "Internal Server Error",
-      link: "/dasboard",
-      linkName: "Dasboard",
+      link: "/dashboard",
+      linkName: "Dashboard",
     });
   }
 });
@@ -475,8 +475,8 @@ router.route("/userProfile").post(async (req, res) => {
     return res.status(500).render("error", {
       title: "Error",
       message: "Internal Server Error",
-      link: "/dasboard",
-      linkName: "Dasboard",
+      link: "/dashboard",
+      linkName: "Dashboard",
     });
   }
 });
