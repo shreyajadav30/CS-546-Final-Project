@@ -350,35 +350,6 @@ router.route("/getAllQuestion").get(async (req, res) => {
   }
 });
 
-router.route("/surveyList").get(async (req, res) => {
-  try {
-    const userId = req.session.user._id;
-    const surveyCollection = await surveyData.getSurveyList(userId);
-    res
-      .status(200)
-      .render("surveyList", { title: "Survey List", surveyCollection });
-  } catch (e) {
-    return res.status(500).json({ error: e.message });
-  }
-});
-
-router.route("/delete/:id").post(async (req, res) => {
-  try {
-    await surveyData.removeSurvey(req.params.id);
-    res.redirect("/surveyList");
-  } catch (e) {
-    return res.status(404).render("error");
-  }
-});
-
-router.route("/edit/:id").post(async (req, res) => {
-  try {
-    const editSurvey = await surveyData.updateSurvey(req.params.id);
-    res.redirect("/surveyList");
-  } catch (e) {
-    return res.status(404).render("error");
-  }
-});
 
 router.route("/stats/:id").get(async (req, res) => {
   try {
