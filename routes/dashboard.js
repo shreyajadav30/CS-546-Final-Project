@@ -20,7 +20,10 @@ import {
 import { getQuestionById } from "../data/dashboard.js";
 import { users } from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
-import nlp from 'compromise';
+import nlp from "compromise";
+import Groq from "groq-sdk";
+import dotenv from "dotenv";
+dotenv.config();
 
 const router = Router();
 
@@ -415,17 +418,20 @@ router.route("/surveystats/:surveyId/:userId/").get(async (req, res) => {
           case "text":
             const extractedPhrases = {};
             que.answer.forEach((response) => {
-                const doc = nlp(response);
-                const phrases = doc.nouns().out("array");
-                phrases.forEach((phrase) => {
-                const cleanedPhrase = phrase.toLowerCase().trim().replace(/[.,;!?]$/, "");
+              const doc = nlp(response);
+              const phrases = doc.nouns().out("array");
+              phrases.forEach((phrase) => {
+                const cleanedPhrase = phrase
+                  .toLowerCase()
+                  .trim()
+                  .replace(/[.,;!?]$/, "");
                 extractedPhrases[cleanedPhrase] =
-                    (extractedPhrases[cleanedPhrase] || 0) + 1;
-                });
+                  (extractedPhrases[cleanedPhrase] || 0) + 1;
+              });
             });
             questionAnswerObject[queCat][index] = {
-                ...questionAnswerObject[queCat][index],
-                extractedPhrases: JSON.stringify(extractedPhrases),
+              ...questionAnswerObject[queCat][index],
+              extractedPhrases: JSON.stringify(extractedPhrases),
             };
             break;
           default:
@@ -433,7 +439,55 @@ router.route("/surveystats/:surveyId/:userId/").get(async (req, res) => {
         }
       });
     });
+    // ref: https://www.npmjs.com/package/groq-sdk
+    const client = new Groq({
+      apiKey: process.env["GROQ_API_KEY"],
+    });
+    let surveyStatesAnswer;
+    try {
+      surveyStatesAnswer = await client.chat.completions
+        .create({
+          messages: [
+            {
+              role: "system",
+              content:
+                "You are best analyst and have more than 20 years of experience. You will get one JSON data in strigify for. You task is to analyze it properly.",
+            },
+            {
+              role: "user",
+              content: `
+              Here is json data:
+              <jsonData>
+              ${JSON.stringify(questionAnswerObject, null, 2)}
+              </jsonData>
+              <descriptionJsonData>
+              above data is responses of people for perticular person. This data includes quetsions,
+              answers as well as some answer statistics (answerStats). 
+              </descriptionJsonData>
 
+              your task is to user your analytical experience and generate summary from using json data
+              provied. Summary must be of 100 to 200 words maximum but it should emphasize main points.
+              The main goal is to summarise the data, so user get to know what kind of reponses they got for the given survey, 
+              we mainly want overall insight by which can be useful to user.. Make sure no preamble or formatting. 
+              Ans give reponse such as you are personal analytical agent of given user and should route like you are talking to them and do not mention about json data.
+              `,
+            },
+          ],
+          model: "llama-3.3-70b-versatile",
+        })
+        .catch(async (err) => {
+          throw err;
+        });
+      // console.log(surveyStatesAnswer.choices[0].message.content);
+    } catch (error) {
+      console.log(error);
+      return res.status(404).render("error", {
+        title: "Not Found",
+        message: "500: Internal Server Error",
+        link: "/",
+        linkName: "Home",
+      });
+    }
     // console.log(JSON.stringify(questionAnswerObject, null, 2));
 
     res.status(200).render("responseStats", {
@@ -446,6 +500,9 @@ router.route("/surveystats/:surveyId/:userId/").get(async (req, res) => {
       surveyingForId: req.params.surveyingForId,
       surveySentToTotal,
       surveyAnswerByTotal,
+      aiGeneratedSummary: surveyStatesAnswer
+        ? surveyStatesAnswer.choices[0].message.content
+        : "No summary!",
     });
   } catch (e) {
     console.log(e);

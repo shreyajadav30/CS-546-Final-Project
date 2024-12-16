@@ -62,24 +62,29 @@
           </div>
         {{/if}}
         {{#if (isEqual this.type "text")}}
-            <div class="question-item-filled">
-                <p class="question-label-filled">Question:</p>
-                <div class="question-value">{{this.questionText}}</div>
-                <p class="question-label-filled">Keyword Analysis:</p>
+          <div class="question-item-filled">
+            <p class="question-label-filled">Question:</p>
+            <div class="question-value">{{this.questionText}}</div>
+            <p class="question-label-filled">Keyword Analysis:</p>
 
-                {{#if this.extractedPhrases}}
-                    <div class="chartCenterContainer">
-                        <canvas
-                        class="chartKeywords"
-                        data-keywords="{{this.extractedPhrases}}"
-                        data-question-text="{{this.questionText}}"
-                        id="{{this.questionId}}_chartKeywords"
-                        ></canvas>
-                    </div>
-                {{else}}
-                    <p>No keywords extracted to display.</p>
-                {{/if}}
-            </div>
+            {{#if this.extractedPhrases}}
+              <div class="chartCenterContainer">
+                <canvas
+                  class="chartKeywords"
+                  data-keywords="{{this.extractedPhrases}}"
+                  data-question-text="{{this.questionText}}"
+                  id="{{this.questionId}}_chartKeywords"
+                ></canvas>
+              </div>
+            {{else}}
+              <p>No keywords extracted to display.</p>
+            {{/if}}
+            <p class="question-label-filled">AI Generated Analysis:</p>
+            <p class="aiNotice">This summary is AI generated so
+              this might give sometime misleading stats so, use at your own
+              risk.</p>
+            <div class="question-value aiGeneratedText">{{../../aiGeneratedSummary}}</div>
+          </div>
         {{/if}}
       {{/each}}
     </div>
