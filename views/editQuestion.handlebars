@@ -1,3 +1,15 @@
+{{#if hasErrors}}
+    <div id="server_error_div">
+        <ul class="error">
+            {{#each errors}}
+                <li>{{this}}</li>
+            {{/each}}
+        </ul>
+    </div>
+{{/if}}
+<div id="error_div" hidden>
+    <ul id="error_list" class="error"></ul>
+</div>
 <form action="/questions/question/edit/{{question.questionId}}" method="POST">
     <label for="question_text">Question:</label>
     <input type="text" id="question_text" name="questionText" value="{{question.questionText}}" required>
@@ -35,7 +47,7 @@
         <label for="new_category">New Category:</label>
         <input type="text" id="new_category" name="newCategory">
     </div>
-    <input type="hidden" name="type" value="{{question.type}}" />
+    <input type="hidden" name="type" value="{{question.type}}">
     <button type="submit">Save Question</button>
 </form>
 
