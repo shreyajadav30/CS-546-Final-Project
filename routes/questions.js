@@ -2,18 +2,14 @@ import { Router } from 'express';
 import createHttpError from 'http-errors';
 import { ObjectId } from 'mongodb';
 import { questionsDataFunctions, surveyDataFunctions } from '../data/index.js';
-import { validationMethods } from '../utils/helpers/validations.js';
+import {
+	validationMethods,
+	questionTypes,
+} from '../utils/helpers/validations.js';
 import { isAdminLoggedIn } from '../utils/middlewares/authMiddlewares.js';
 
 const router = Router();
 router.use(isAdminLoggedIn);
-
-const questionTypes = [
-	{ name: 'Text', type: 'text' },
-	{ name: 'Rating', type: 'rating' },
-	{ name: 'Single Select', type: 'single_select' },
-	{ name: 'Multi Select', type: 'multi_select' },
-];
 
 router.get('/', async (req, res, next) => {
 	try {
@@ -23,7 +19,12 @@ router.get('/', async (req, res, next) => {
 			questions,
 		});
 	} catch (e) {
-		return res.status(500).json({ error: e.message });
+		return res.status(500).render('error', {
+			title: 'Error',
+			message: e.message,
+			link: '/dasboard',
+			linkName: 'Dasboard',
+		});
 	}
 });
 
@@ -36,7 +37,12 @@ router
 				questionTypes: questionTypes,
 			});
 		} catch (e) {
-			return res.status(500).json({ error: e.message });
+			return res.status(500).render('error', {
+				title: 'Error',
+				message: e.message,
+				link: '/dasboard',
+				linkName: 'Dasboard',
+			});
 		}
 	})
 	.post(async (req, res, next) => {
@@ -76,7 +82,12 @@ router
 				categories,
 			});
 		} catch (e) {
-			return res.status(500).json({ error: e.message });
+			return res.status(500).render('error', {
+				title: 'Error',
+				message: e.message,
+				link: '/dasboard',
+				linkName: 'Dasboard',
+			});
 		}
 	});
 
@@ -85,6 +96,47 @@ router.route('/create-question/:id').post(async (req, res, next) => {
 	const { id } = req.params;
 	const { type, questionText, options, scale, category, newCategory } =
 		req.body;
+	const questionData = {
+		useCount: 0,
+	};
+	try {
+		questionData.questionId = validationMethods.isValidString(
+			id,
+			'Question ID'
+		);
+		questionData.questionText = validationMethods.isValidString(
+			questionText,
+			'Question text'
+		);
+		questionData.type = validationMethods.isValidQuestionType(
+			type,
+			'Question type'
+		);
+		switch (type) {
+			case 'single_select':
+			case 'multi_select':
+				questionData.options = validationMethods.isValidArrayOfStrings(
+					options,
+					'Options'
+				);
+				break;
+			case 'rating':
+				questionData.scale = validationMethods.isValidScale(
+					scale,
+					'Rating scale'
+				);
+				break;
+			default:
+				break;
+		}
+	} catch (error) {
+		return res.status(500).render('error', {
+			title: 'Error',
+			message: e.message,
+			link: '/dasboard',
+			linkName: 'Dasboard',
+		});
+	}
 
 	let selectedCategory = category;
 	if (category === 'other') {
@@ -94,25 +146,6 @@ router.route('/create-question/:id').post(async (req, res, next) => {
 			);
 		}
 		selectedCategory = newCategory;
-	}
-
-	const questionData = {
-		questionId: id,
-		questionText,
-		type,
-		useCount: 0,
-	};
-
-	switch (type) {
-		case 'single_select':
-		case 'multi_select':
-			questionData.options = options;
-			break;
-		case 'rating':
-			questionData.scale = scale;
-			break;
-		default:
-			break;
 	}
 
 	try {
@@ -131,7 +164,12 @@ router.route('/question/:id').delete(async (req, res) => {
 		const { id: paramID } = req.params;
 		const id = validationMethods.isValidString(paramID, 'Question ID');
 		if (!id) {
-			return res.status(400).json({ error: 'Question ID is required' });
+			return res.status(400).render('error', {
+				title: 'Error',
+				message: 'Question ID is required',
+				link: '/dasboard',
+				linkName: 'Dasboard',
+			});
 		}
 		const surveys = await surveyDataFunctions.getAllSurveys();
 		const isQuestionUsed = surveys.some((survey) => {
@@ -140,16 +178,22 @@ router.route('/question/:id').delete(async (req, res) => {
 				.includes(id);
 		});
 		if (isQuestionUsed) {
-			return res.status(400).json({
-				error: 'This question is currently being used in a survey and cannot be deleted!',
+			return res.status(400).render('error', {
+				title: 'Error',
+				message:
+					'This question is currently being used in a survey and cannot be deleted!',
+				link: '/dasboard',
+				linkName: 'Dasboard',
 			});
 		}
 		await questionsDataFunctions.deleteQuestion(id);
 		res.redirect('/questions');
 	} catch (error) {
-		console.error(error);
-		return res.status(500).json({
-			error: 'An error occurred while deleting the question',
+		return res.status(500).render('error', {
+			title: 'Error',
+			message: error.message,
+			link: '/dasboard',
+			linkName: 'Dasboard',
 		});
 	}
 });
@@ -274,7 +318,12 @@ router
 				questions,
 			});
 		} catch (e) {
-			return res.status(500).json({ error: e.message });
+			return res.status(500).render('error', {
+				title: 'Error',
+				message: e.message,
+				link: '/dasboard',
+				linkName: 'Dasboard',
+			});
 		}
 	})
 	.post(async (req, res, next) => {});
