@@ -92,7 +92,6 @@ router
 	});
 
 router.route('/create-question/:id').post(async (req, res, next) => {
-	// Todo: Error handling for question data
 	const { id } = req.params;
 	const { type, questionText, options, scale, category, newCategory } =
 		req.body;
@@ -154,8 +153,13 @@ router.route('/create-question/:id').post(async (req, res, next) => {
 			questionData
 		);
 		res.redirect('/questions');
-	} catch (err) {
-		next(createHttpError.InternalServerError(err.message));
+	} catch (error) {
+		return res.status(500).render('error', {
+			title: 'Error',
+			message: error.message,
+			link: '/dasboard',
+			linkName: 'Dasboard',
+		});
 	}
 });
 

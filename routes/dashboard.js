@@ -7,6 +7,7 @@ import {
   getSurveyAnswer,
   getSurveyAnswerStatistics,
   getSurveyAnswerStatisticsForAdmin,
+  getQuestionById,
 } from "../data/dashboard.js";
 import {
   calculateMutliChoiceStates,
@@ -17,10 +18,9 @@ import {
   isValidArray,
   ratingValidation,
 } from "../utils/helpers/helpers.js";
-import { getQuestionById } from "../data/dashboard.js";
 import { users } from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
-import nlp from 'compromise';
+import { stopWords, processAnswers } from "../utils/helpers/validations.js";
 
 const router = Router();
 
@@ -388,51 +388,67 @@ router.route("/surveystats/:surveyId/:userId/").get(async (req, res) => {
       })
     );
 
-    Object.keys(questionAnswerObject).map(async (queCat) => {
-      questionAnswerObject[queCat].map((que, index) => {
-        switch (que.type) {
-          case "single_select":
-            let count = calculateSingleChoiceCount(que.answer);
-            questionAnswerObject[queCat][index] = {
-              ...questionAnswerObject[queCat][index],
-              answerStats: JSON.stringify(count),
-            };
-            break;
-          case "multi_select":
-            let stats = calculateMutliChoiceStates(que.answer);
-            questionAnswerObject[queCat][index] = {
-              ...questionAnswerObject[queCat][index],
-              answerStats: JSON.stringify(stats),
-            };
-            break;
-          case "rating":
-            let average = findAverage(que.answer);
-            questionAnswerObject[queCat][index] = {
-              ...questionAnswerObject[queCat][index],
-              answerStats: JSON.stringify(average),
-            };
-            break;
-          case "text":
-            const extractedPhrases = {};
-            que.answer.forEach((response) => {
-                const doc = nlp(response);
-                const phrases = doc.nouns().out("array");
-                phrases.forEach((phrase) => {
-                const cleanedPhrase = phrase.toLowerCase().trim().replace(/[.,;!?]$/, "");
-                extractedPhrases[cleanedPhrase] =
-                    (extractedPhrases[cleanedPhrase] || 0) + 1;
-                });
-            });
-            questionAnswerObject[queCat][index] = {
-                ...questionAnswerObject[queCat][index],
-                extractedPhrases: JSON.stringify(extractedPhrases),
-            };
-            break;
-          default:
-            break;
-        }
-      });
-    });
+    Object.keys(questionAnswerObject).forEach(async (queCat) => {
+		questionAnswerObject[queCat].map((que, index) => {
+			switch (que.type) {
+				case 'single_select':
+					let count = calculateSingleChoiceCount(que.answer);
+					questionAnswerObject[queCat][index] = {
+						...questionAnswerObject[queCat][index],
+						answerStats: JSON.stringify(count),
+					};
+					break;
+				case 'multi_select':
+					let stats = calculateMutliChoiceStates(que.answer);
+					questionAnswerObject[queCat][index] = {
+						...questionAnswerObject[queCat][index],
+						answerStats: JSON.stringify(stats),
+					};
+					break;
+				case 'rating':
+					let average = findAverage(que.answer);
+					questionAnswerObject[queCat][index] = {
+						...questionAnswerObject[queCat][index],
+						answerStats: JSON.stringify(average),
+					};
+					break;
+				case 'text':
+					const keywordCounts = {};
+                    processAnswers(que.answer, stopWords, keywordCounts);
+					// que.answer.forEach((response) => {
+					// 	const doc = nlp(response);
+					// 	let phrases = doc.nouns().out('array');
+					// 	phrases = phrases
+					// 		.map((phrase) =>
+					// 			phrase
+					// 				.toLowerCase()
+					// 				.replace(/[.,!?;:]/g, '')
+					// 				.trim()
+					// 		)
+					// 		.flatMap((phrase) =>
+					// 			phrase.includes(' and ')
+					// 				? phrase.split(' and ').map((p) => p.trim())
+					// 				: [phrase]
+					// 		);
+					// 	phrases = phrases.filter(
+					// 		(phrase) =>
+					// 			!stopWords.includes(phrase) && phrase.length > 1
+					// 	);
+					// 	phrases.forEach((phrase) => {
+					// 		keywordCounts[phrase] =
+					// 			(keywordCounts[phrase] || 0) + 1;
+					// 	});
+					// });
+					questionAnswerObject[queCat][index] = {
+						...questionAnswerObject[queCat][index],
+						extractedPhrases: JSON.stringify(keywordCounts),
+					};
+					break;
+				default:
+					break;
+			}
+		});
+	});
 
     // console.log(JSON.stringify(questionAnswerObject, null, 2));
 
