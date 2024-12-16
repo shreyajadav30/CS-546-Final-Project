@@ -20,6 +20,7 @@ import {
 import { getQuestionById } from "../data/dashboard.js";
 import { users } from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
+import nlp from 'compromise';
 
 const router = Router();
 
@@ -412,6 +413,20 @@ router.route("/surveystats/:surveyId/:userId/").get(async (req, res) => {
             };
             break;
           case "text":
+            const extractedPhrases = {};
+            que.answer.forEach((response) => {
+                const doc = nlp(response);
+                const phrases = doc.nouns().out("array");
+                phrases.forEach((phrase) => {
+                const cleanedPhrase = phrase.toLowerCase().trim().replace(/[.,;!?]$/, "");
+                extractedPhrases[cleanedPhrase] =
+                    (extractedPhrases[cleanedPhrase] || 0) + 1;
+                });
+            });
+            questionAnswerObject[queCat][index] = {
+                ...questionAnswerObject[queCat][index],
+                extractedPhrases: JSON.stringify(extractedPhrases),
+            };
             break;
           default:
             break;

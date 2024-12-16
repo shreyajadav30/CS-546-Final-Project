@@ -1,5 +1,5 @@
 const multiselectcharts = document.querySelectorAll(".chartMultiSelect");
-
+const keywordCharts = document.querySelectorAll(".chartKeywords");
 const ratingCharts = document.querySelectorAll(".chartRating");
 const singleSelectCharts = document.querySelectorAll(".chartSingleSelect");
 // console.log(ratingCharts);
@@ -82,4 +82,47 @@ singleSelectCharts.forEach((singleSelectChart) => {
       ],
     },
   });
+});
+
+keywordCharts.forEach((keywordChart) => {
+  const keywordData = JSON.parse(
+    keywordChart.getAttribute("data-keywords") || "{}"
+  );
+  const questionText = keywordChart.getAttribute("data-question-text");
+
+  const labels = Object.keys(keywordData);
+  const dataCounts = Object.values(keywordData);
+
+  if (labels.length > 0) {
+    new Chart(keywordChart, {
+      type: "bar",
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: `Keyword Frequency: ${questionText}`,
+            data: dataCounts,
+            borderWidth: 1,
+            backgroundColor: "#4caf50",
+            borderColor: "#2e7d32",
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: (context) => `${context.label}: ${context.raw} times`,
+            },
+          },
+        },
+        scales: {
+          y: { beginAtZero: true, title: { display: true, text: "Count" } },
+          x: { title: { display: true, text: "Keywords" } },
+        },
+      },
+    });
+  }
 });

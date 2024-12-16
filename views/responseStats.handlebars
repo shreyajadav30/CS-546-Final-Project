@@ -62,14 +62,24 @@
           </div>
         {{/if}}
         {{#if (isEqual this.type "text")}}
-          <div class="question-item-filled">
-            <p class="question-label-filled">Question:</p>
-            <div class="question-value">{{this.questionText}}</div>
-            <p class="question-label-filled">Summary:</p>
-            {{#each this.answer}}
-              <p>{{this}}</p>
-            {{/each}}
-          </div>
+            <div class="question-item-filled">
+                <p class="question-label-filled">Question:</p>
+                <div class="question-value">{{this.questionText}}</div>
+                <p class="question-label-filled">Keyword Analysis:</p>
+
+                {{#if this.extractedPhrases}}
+                    <div class="chartCenterContainer">
+                        <canvas
+                        class="chartKeywords"
+                        data-keywords="{{this.extractedPhrases}}"
+                        data-question-text="{{this.questionText}}"
+                        id="{{this.questionId}}_chartKeywords"
+                        ></canvas>
+                    </div>
+                {{else}}
+                    <p>No keywords extracted to display.</p>
+                {{/if}}
+            </div>
         {{/if}}
       {{/each}}
     </div>
