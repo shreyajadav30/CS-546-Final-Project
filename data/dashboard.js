@@ -86,7 +86,9 @@ export const surveyResponse = async (
           );
           break;
         case "multi_select":
-          isValidArray(surveyAnswers[queId]);
+          isValidArray(Array.isArray(surveyAnswers[queId])
+          ? surveyAnswers[queId]
+          : surveyAnswers[queId]?.split(','));
           break;
         case "rating":
           surveyAnswers[queId] = ratingValidation(surveyAnswers[queId]);
