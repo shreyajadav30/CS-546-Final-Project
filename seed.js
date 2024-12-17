@@ -13,17 +13,15 @@ async function seedDatabase() {
     _db = _connection.db(mongoConfig.database);
     console.log("MongoDb connected to db");
 
-    const db = await dbConnection();
-
-    if(db){
-        db.dropDatabase();  // Drop the current database
+    if(_db){
+        await _db.dropDatabase();
+        console.log('Exsisting DB dropped');
+        
     }
-    // Access the collection
-    const users = db.collection("users"); // Replace with your collection name
-    const survey = db.collection('survey');
-    const questions = db.collection('questions');
-    const surveyAnswer = db.collection("surveyAnswer");
-    // Define seed data
+    const users = _db.collection("users");
+    const survey = _db.collection('survey');
+    const questions = _db.collection('questions');
+    const surveyAnswer = _db.collection("surveyAnswer");
     const userData = [{
         "_id": new ObjectId("675d352df23102cea187efd9"),
         "firstName": "Alice",
@@ -168,8 +166,8 @@ async function seedDatabase() {
         "_id": new ObjectId("675d352df23102cea187efde"),
         "firstName": "Gautam",
         "lastName": "Vasvani",
-        "email": "gvasvani@example.com",
-        "userId": "gvasvani",
+        "email": "gvaswani@example.com",
+        "userId": "gvaswani",
         "password": "$2a$16$b48IkpkvsNauHfZyRWNSLePnvSUpxXk2iSDmHF0QrzlMpNQgJTk6y",
         "role": "user",
         "surveys": [
