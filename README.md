@@ -8,34 +8,6 @@ A platform designed to simplify the process of creating, distributing, and analy
 
 ## Features
 
--   Create doctor, patient, chat and review
--   List of doctors
--   Send or update information about doctors and patients
--   List of timeslots of doctors according to availaibility
--   Book, update, delete appointment
--   Send email for reminder, confirmation, updation and deletion of appointment
--   Send information about chat and review
-
-## Tech
-
--   [Node.js](https://nodejs.org/en/) - A JavaScript library for building an open-source server environment.
-
-## Installation
-
-Doctolib-Backend requires [Node.js](https://nodejs.org/) v10+ to run.
-
-```sh
-git clone git@github.com:ujasitalia/CS546-Final-Project.git
-cd CS546-Final-Project
-cd backend
-git checkout master
-npm install
-npm run seed
-npm start
-```
-
-## Features
-
 -   User Sign Up and Login.
 -   View, search, edit, update, and delete user records.
 -   Update personal information.
