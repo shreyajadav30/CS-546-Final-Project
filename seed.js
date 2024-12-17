@@ -165,7 +165,7 @@ async function seedDatabase() {
       {
         "_id": new ObjectId("675d352df23102cea187efde"),
         "firstName": "Gautam",
-        "lastName": "Vasvani",
+        "lastName": "Vaswani",
         "email": "gvaswani@example.com",
         "userId": "gvaswani",
         "password": "$2a$16$b48IkpkvsNauHfZyRWNSLePnvSUpxXk2iSDmHF0QrzlMpNQgJTk6y",
@@ -557,7 +557,7 @@ async function seedDatabase() {
         "surveydBy": "675f30aa85e4f16f43308be8",
         "surveyingFor": "675d352df23102cea187efdc",
         "answers": {
-          "675b7ca79055a1ebf7d2f3b6": "good",
+          "675b7ca79055a1ebf7d2f3b6": "It was insightful and motivating",
           "675c00b3f0c567d26ad6aefc": "Good",
           "475c00b3f0c522d26ad6aefc": 4,
           "675c309d7d0805609db0ab76": "no comment"
@@ -570,7 +570,7 @@ async function seedDatabase() {
         "surveydBy": "675f30aa85e4f16f43308be8",
         "surveyingFor": "675d352df23102cea187efde",
         "answers": {
-          "675b7ca79055a1ebf7d2f3b6": "best",
+          "675b7ca79055a1ebf7d2f3b6": "It had a vibrant atmosphere",
           "675c00b3f0c567d26ad6aefc": "Good",
           "475c00b3f0c522d26ad6aefc": 4,
           "675c309d7d0805609db0ab76": "no comments"
@@ -600,7 +600,7 @@ async function seedDatabase() {
         "surveydBy": "675d352df23102cea187efdb",
         "surveyingFor": "675d352df23102cea187efdc",
         "answers": {
-          "675b7ca79055a1ebf7d2f3b6": "best",
+          "675b7ca79055a1ebf7d2f3b6": "The event was insightful and interactive",
           "675c00b3f0c567d26ad6aefc": "Good",
           "475c00b3f0c522d26ad6aefc": 3,
           "675c309d7d0805609db0ab76": "no"
@@ -631,7 +631,7 @@ async function seedDatabase() {
         "surveydBy": "675d352df23102cea187efda",
         "surveyingFor": "675d352df23102cea187efda",
         "answers": {
-          "675b7ca79055a1ebf7d2f3b6": "best",
+          "675b7ca79055a1ebf7d2f3b6": "It was well-organized",
           "675c00b3f0c567d26ad6aefc": "Best",
           "475c00b3f0c522d26ad6aefc": 3,
           "675c309d7d0805609db0ab76": "no"
@@ -644,7 +644,7 @@ async function seedDatabase() {
         "surveydBy": "675d352df23102cea187efdd",
         "surveyingFor": "675d352df23102cea187efde",
         "answers": {
-          "675b7ca79055a1ebf7d2f3b6": "mind blowing",
+          "675b7ca79055a1ebf7d2f3b6": "well-organized and impactful",
           "675c00b3f0c567d26ad6aefc": "Excellent",
           "475c00b3f0c522d26ad6aefc": 5,
           "675c309d7d0805609db0ab76": "no"
@@ -673,7 +673,7 @@ async function seedDatabase() {
         "surveydBy": "675d352df23102cea187efdc",
         "surveyingFor": "675d352df23102cea187efdc",
         "answers": {
-          "675b7ca79055a1ebf7d2f3b6": "good",
+          "675b7ca79055a1ebf7d2f3b6": "insightful event",
           "675c00b3f0c567d26ad6aefc": "Excellent",
           "475c00b3f0c522d26ad6aefc": 2,
           "675c309d7d0805609db0ab76": "no"
