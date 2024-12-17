@@ -79,11 +79,6 @@
             {{else}}
               <p>No keywords extracted to display.</p>
             {{/if}}
-            <p class="question-label-filled">AI Generated Analysis:</p>
-            <p class="aiNotice">This summary is AI generated so
-              this might give sometime misleading stats so, use at your own
-              risk.</p>
-            <div class="question-value aiGeneratedText">{{../../aiGeneratedSummary}}</div>
           </div>
         {{/if}}
       {{/each}}
@@ -92,6 +87,11 @@
       <h2>You don't have have any responses yet!</h2>
     {{/if}} --}}
   {{/each}}
+<p class="question-label-filled">AI Generated Analysis:</p>
+<p class="aiNotice">This summary is AI generated so
+    this might give sometime misleading stats so, use at your own
+    risk.</p>
+<div class="question-value aiGeneratedText">{{aiGeneratedSummary}}</div>
 
 </div>
 <script src="/public/js/surveyStats.js"></script>
