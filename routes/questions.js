@@ -344,6 +344,46 @@ router
 		}
 	});
 
+router.route('/question/preview/:id').get(async (req, res) => {
+	const { id: paramID } = req.params;
+	let questionId;
+	try {
+		questionId = validationMethods.isValidString(paramID, 'Question ID');
+	} catch (error) {
+		return res.status(400).render('error', {
+			title: 'Error',
+			message: error.message,
+			link: '/questions',
+			linkName: 'Questions tab',
+		});
+	}
+	try {
+		const question = await questionsDataFunctions.getQuestionById(
+			questionId
+		);
+		if (!question) {
+			return res.status(404).render('error', {
+				title: 'Error',
+				message: 'Question not found',
+				link: '/questions',
+				linkName: 'Questions tab',
+			});
+		}
+		return res.render('testSurvey', {
+			title: 'Preview Question',
+			questions: [question],
+		});
+	} catch (error) {
+		console.error(error.message);
+		return res.status(500).render('error', {
+			title: 'Error',
+			message: error.message,
+			link: '/questions',
+			linkName: 'Questions tab',
+		});
+	}
+});
+
 // !Dummy route to demo survey
 router
 	.route('/testSurvey')

@@ -165,7 +165,9 @@ router
               );
               break;
             case "multi_select":
-              isValidArray(surveyAnswerData[questionId]);
+              isValidArray(Array.isArray(surveyAnswerData[questionId])
+                ? surveyAnswerData[questionId]
+                : surveyAnswerData[questionId]?.split(','));
               break;
             case "rating":
               surveyAnswerData[questionId] = ratingValidation(

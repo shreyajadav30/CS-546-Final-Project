@@ -1,7 +1,7 @@
 <form {{!-- action="/surveys/submit" method="POST" --}}>
 	{{#each questions}}
 		<div class="question-block">
-			<label for="question_{{this.questionId}}">{{this.questionText}}</label>
+			<p>{{this.questionText}}</p>
 
 			{{#if (or (isEqual this.type "single_select") (isEqual this.type "multi_select"))}}
 				<ul>
@@ -14,14 +14,14 @@
 									name="question_{{../questionId}}"
 									value="{{this}}"
 									required
-								/>
+								>
 							{{else}}
 								<input
 									type="checkbox"
 									id="option_{{@index}}_{{../questionId}}"
 									name="question_{{../questionId}}[]"
 									value="{{this}}"
-								/>
+								>
 							{{/if}}
 							<label for="option_{{@index}}_{{../questionId}}">{{this}}</label>
 						</li>
@@ -31,6 +31,7 @@
 
 			{{#if (isEqual this.type "rating")}}
 				<select id="question_{{this.questionId}}" name="question_{{this.questionId}}" required>
+                    <option value="" disabled selected>Select option</option>
 					{{#each (range 1 this.scale)}}
 						<option value="{{this}}">{{this}}</option>
 					{{/each}}
