@@ -4,7 +4,7 @@ A platform designed to simplify the process of creating, distributing, and analy
 
 # GitHub repo
 
--   https://github.com/dhruvmojila/CS-546-Final-Project
+-   https://github.com/shreyajadav30/CS-546-Final-Project
 
 ## Features
 
